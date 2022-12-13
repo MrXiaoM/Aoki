@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 请不要更改顺序 -->
+    <string-array name="spinner_protocol">
+        <item>@string/protocol_ANDROID_PHONE</item>
+        <item>@string/protocol_ANDROID_PAD</item>
+        <item>@string/protocol_ANDROID_WATCH</item>
+        <item>@string/protocol_IPAD</item>
+        <item>@string/protocol_MACOS</item>
+    </string-array>
+    <string-array name="spinner_hb_strategy">
+        <item>@string/hb_strategy_STAB_HB</item>
+        <item>@string/hb_strategy_REGISTER</item>
+        <item>@string/hb_strategy_NONE</item>
+    </string-array>
+    <string-array name="accounts_operation">
+        <item>@string/accounts_operation_del_device</item>
+        <item>@string/accounts_operation_del_cache</item>
+        <item>@string/accounts_operation_del</item>
+    </string-array>
+</resources>
