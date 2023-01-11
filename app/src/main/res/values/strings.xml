@@ -40,6 +40,7 @@
     <string name="captcha_sms_request_send">发送验证码</string>
     <string name="captcha_sms_request_other">其他验证方式</string>
     <string name="captcha_sms_send_title">验证码已发送</string>
+    <string name="captcha_sms_send_fail_title">验证码发送失败</string>
     <string name="captcha_sms_send_message">发送验证码成功, 请注意查收. 若未收到, 可在一分钟后重试</string>
     <string name="captcha_sms_send_retry">重试</string>
     <string name="protocol_ANDROID_PHONE">手机协议</string>

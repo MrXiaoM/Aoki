@@ -259,7 +259,17 @@ class LoginActivity : AppCompatActivity() {
         var lastRequested = 0L
         fun requestSms() {
             lastRequested = System.currentTimeMillis()
-            loginViewModel.viewModelScope.launch { sms.requestSms() }
+            loginViewModel.viewModelScope.launch {
+                try {
+                    sms.requestSms()
+                } catch(t: Throwable) {
+                    AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_send_fail_title)
+                        .setCancelable(false)
+                        .setMessage(t.stackTraceToString())
+                        .buttonPositive(R.string.ok) { }
+                        .show()
+                }
+            }
         }
 
         val panel = LinearLayout(this@LoginActivity).apply {
