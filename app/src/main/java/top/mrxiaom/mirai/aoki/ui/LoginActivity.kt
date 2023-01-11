@@ -1,13 +1,11 @@
 package top.mrxiaom.mirai.aoki.ui
 
 import android.Manifest
-import android.content.DialogInterface
-import android.content.DialogInterface.OnClickListener
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.view.Menu
 import android.view.View
@@ -22,7 +20,6 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
-import net.mamoe.mirai.utils.mapToArray
 import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.U.buttonNegative
 import top.mrxiaom.mirai.aoki.U.buttonPositive
@@ -203,17 +200,19 @@ class LoginActivity : AppCompatActivity() {
             val accountList = File(externalRoot, "bots").listFiles()?.mapNotNull {
                 it.name.toLongOrNull()
             }?.map { it.toString() }?.toTypedArray()
-            if (!accountList.isNullOrEmpty()) alert.setItems(accountList) { _, i ->
+            if (!accountList.isNullOrEmpty()) alert.setItems(accountList) { topDialog, i ->
                 val account = accountList[i]
                 val folder = File(externalRoot, "bots/$account")
                 AlertDialog.Builder(this).setTitle(account)
-                    .setItems(R.array.accounts_operation) { _, btn ->
+                    .setItems(R.array.accounts_operation) { dialog, btn ->
                         when (btn) {
                             0 -> File(folder, "device.json").delete()
                             1 -> File(folder, "cache").delete()
                             2 -> folder.delete()
                         }
                         Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                        topDialog.dismiss()
                     }
                     .buttonNegative(R.string.cancel)
                     .show()
@@ -244,14 +243,37 @@ class LoginActivity : AppCompatActivity() {
                 请到 Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai/bots 复制设备信息
                 点击 确定 退出登录
             """.trimIndent())
-            .setPositiveButton(R.string.ok) { _, _ -> }
+            .buttonPositive(R.string.ok) { bot.close() }
+            .buttonNegative("打包并发送到…") {
+                try {
+                    val account = bot.id
+                    bot.close()
+                    val src = File(externalRoot, "bots/$account")
+                    val zip = File(externalRoot, "export/$account.zip")
+                    if (zip.exists()) zip.delete()
+                    U.zip(src, zip)
+                    runInUIThread {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                            setType("*/*")
+                            putExtra(Intent.EXTRA_STREAM, Uri.fromFile(zip))
+                        }
+                        startActivity(Intent.createChooser(intent, "分享"))
+                    }
+                } catch (t: Throwable) {
+                    runInUIThread {
+                        Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG)
+                    }
+                }
+            }
             .show()
     }
 
     private fun showLoginFailed(errorString: String) {
         AlertDialog.Builder(this).setTitle(R.string.login_failed)
             .setMessage(errorString)
-            .setPositiveButton(R.string.ok) { _, _ -> }
+            .buttonPositive(R.string.ok) {  }
             .show()
     }
 

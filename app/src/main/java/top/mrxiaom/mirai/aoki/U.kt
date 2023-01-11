@@ -20,6 +20,10 @@ import net.mamoe.mirai.utils.BotConfiguration
 import net.mamoe.mirai.utils.DeviceInfo
 import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfoManager
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 val miraiVersion = "2.13.2"
 object U {
@@ -137,4 +141,28 @@ object U {
         }catch (_: Throwable) {
             false
         }
+    fun zip(srcPath: File, zipPath: File) {
+        zipPath.parentFile?.mkdirsQuietly()
+        val srcParent = srcPath.parentFile ?: return
+        val out = ZipOutputStream(FileOutputStream(zipPath))
+        zip(srcParent, srcPath, out)
+        out.finish()
+        out.close()
+    }
+    private fun zip(parent: File, path: File, out: ZipOutputStream) {
+        val files = path.listFiles() ?: return
+        for (file in files) {
+            if (file.isDirectory) {
+                zip(parent, file, out)
+                continue
+            }
+            val pathZip = file.toRelativeString(parent)
+            val zipEntry = ZipEntry(pathZip)
+            val input = FileInputStream(file)
+
+            out.putNextEntry(zipEntry)
+            out.write(input.readBytes())
+            out.closeEntry()
+        }
+    }
 }
