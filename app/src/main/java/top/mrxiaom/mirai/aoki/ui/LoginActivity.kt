@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.text.TextUtils
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -59,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
         Thread.setDefaultUncaughtExceptionHandler { p0, e ->
             try {
                 File(externalRoot, "crash.log").writeText(e.stackTraceToString())
-            }catch (_: Throwable){
+            } catch (_: Throwable) {
                 // 收声
             }
             handler?.uncaughtException(p0, e)
@@ -87,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
             return@setOnMenuItemClickListener false
         }
         binding.infomation.apply {
-            val version = packageManager.getPackageInfo(packageName,PackageManager.GET_CONFIGURATIONS).versionName
+            val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
 
             text = """
                 Aoki $version, mirai $miraiVersion
@@ -102,9 +103,11 @@ class LoginActivity : AppCompatActivity() {
             MiraiProtocol.MACOS,
         )
         val protocol = binding.protocol
-        protocol.adapter = ArrayAdapter.createFromResource(this, R.array.spinner_protocol, android.R.layout.simple_spinner_item).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
+        protocol.adapter =
+            ArrayAdapter.createFromResource(this, R.array.spinner_protocol, android.R.layout.simple_spinner_item)
+                .apply {
+                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                }
         protocol.onItemSelected {
             if (it < 0) return@onItemSelected
             BotManager.defaultProtocol = protocols[it]
@@ -115,9 +118,11 @@ class LoginActivity : AppCompatActivity() {
             HeartbeatStrategy.NONE,
         )
         val hbStrategy = binding.hbStrategy
-        hbStrategy.adapter = ArrayAdapter.createFromResource(this, R.array.spinner_hb_strategy, android.R.layout.simple_spinner_item).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
+        hbStrategy.adapter =
+            ArrayAdapter.createFromResource(this, R.array.spinner_hb_strategy, android.R.layout.simple_spinner_item)
+                .apply {
+                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                }
         hbStrategy.onItemSelected {
             if (it < 0) return@onItemSelected
             BotManager.defaultHbStrategy = hbStrategies[it]
@@ -151,7 +156,12 @@ class LoginActivity : AppCompatActivity() {
             }
             AlertDialog.Builder(this).setTitle(R.string.captcha_sms_request_title)
                 .setCancelable(false)
-                .setMessage(R.string.captcha_sms_request_message) { text -> text.replace("\$phoneNumberFull", phoneNumberFull) }
+                .setMessage(R.string.captcha_sms_request_message) { text ->
+                    text.replace(
+                        "\$phoneNumberFull",
+                        phoneNumberFull
+                    )
+                }
                 .buttonPositive(R.string.captcha_sms_request_send) {
                     smsSent(def, smsRequest.sms)
                 }.buttonNegative(R.string.captcha_sms_request_other) {
@@ -171,6 +181,10 @@ class LoginActivity : AppCompatActivity() {
             login.isClickable = true
         }
         fun login() {
+            if (TextUtils.isEmpty(qq.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
+                Toast.makeText(this, "那个...你好像忘了输入什么东西", Toast.LENGTH_SHORT).show();
+                return;
+            }
             loginViewModel.viewModelScope.launch {
                 loginViewModel.login(
                     externalRoot,
@@ -234,7 +248,8 @@ class LoginActivity : AppCompatActivity() {
         AlertDialog.Builder(this).setTitle("登录成功")
             .setCancelable(false)
             .let { builder -> avatar?.let { builder.setIcon(it) } ?: builder }
-            .setMessage("""
+            .setMessage(
+                """
                 ${bot.id}: ${bot.nick}
                 群聊数量: ${bot.groups.size}
                 分组数量: ${bot.friendGroups.asCollection().size}
@@ -242,7 +257,8 @@ class LoginActivity : AppCompatActivity() {
                 
                 请到 Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai/bots 复制设备信息
                 点击 确定 退出登录
-            """.trimIndent())
+            """.trimIndent()
+            )
             .buttonPositive(R.string.ok) { bot.close() }
             .buttonNegative("打包并发送到…") {
                 try {
@@ -273,7 +289,7 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(errorString: String) {
         AlertDialog.Builder(this).setTitle(R.string.login_failed)
             .setMessage(errorString)
-            .buttonPositive(R.string.ok) {  }
+            .buttonPositive(R.string.ok) { }
             .show()
     }
 
@@ -284,7 +300,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.viewModelScope.launch {
                 try {
                     sms.requestSms()
-                } catch(t: Throwable) {
+                } catch (t: Throwable) {
                     AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_send_fail_title)
                         .setCancelable(false)
                         .setMessage(t.stackTraceToString())

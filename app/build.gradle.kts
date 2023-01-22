@@ -46,4 +46,7 @@ dependencies {
 
     implementation("net.mamoe:mirai-core:$miraiVersion")
     implementation("net.mamoe:mirai-core-utils:$miraiVersion")
+
+    implementation("org.bouncycastle:bcprov-jdk15on:1.56")
+
 }
