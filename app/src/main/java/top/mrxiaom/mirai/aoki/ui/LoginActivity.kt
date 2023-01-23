@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
@@ -220,9 +221,10 @@ class LoginActivity : AppCompatActivity() {
                 AlertDialog.Builder(this).setTitle(account)
                     .setItems(R.array.accounts_operation) { dialog, btn ->
                         when (btn) {
-                            0 -> File(folder, "device.json").delete()
-                            1 -> File(folder, "cache").delete()
-                            2 -> folder.delete()
+                            0 -> shareAccount(account)
+                            1 -> File(folder, "device.json").delete()
+                            2 -> File(folder, "cache").delete()
+                            3 -> folder.delete()
                         }
                         Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -260,28 +262,10 @@ class LoginActivity : AppCompatActivity() {
             """.trimIndent()
             )
             .buttonPositive(R.string.ok) { bot.close() }
-                try {
-                    val account = bot.id
-                    bot.close()
-                    val src = File(externalRoot, "bots/$account")
-                    val zip = File(externalRoot, "export/$account.zip")
-                    if (zip.exists()) zip.delete()
-                    U.zip(src, zip)
-                    runInUIThread {
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                            setType("*/*")
-                            putExtra(Intent.EXTRA_STREAM, Uri.fromFile(zip))
-                        }
-                        startActivity(Intent.createChooser(intent, "分享"))
-                    }
-                } catch (t: Throwable) {
-                    runInUIThread {
-                        Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG)
-                    }
-                }
             .buttonNegative(R.string.accounts_operation_export) {
+                val account = bot.id
+                bot.close()
+                shareAccount(account)
             }
             .show()
     }
@@ -340,6 +324,40 @@ class LoginActivity : AppCompatActivity() {
                 timer.cancel()
                 def.complete(textCode.text.toString())
             }.show()
+    }
+
+    /**
+     * 导出账户并分享
+     */
+    private fun shareAccount(account: Any) {
+        try {
+            val src = File(externalRoot, "bots/$account")
+            val zip = File(externalRoot, "export/$account.zip")
+            if (zip.exists()) zip.delete()
+            U.zip(src, zip)
+            share("$account.zip")
+        } catch (t: Throwable) {
+            runInUIThread {
+                Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG)
+            }
+        }
+    }
+
+    /**
+     * 分享在 AokiMirai/export 下的文件
+     */
+    private fun share(fileName: String) {
+        runInUIThread {
+            val share = File(getExternalFilesDir(null), "AokiMirai/export/$fileName")
+            val uri = FileProvider.getUriForFile(this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", share);
+
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                type = "*/*"
+                putExtra(Intent.EXTRA_STREAM, uri)
+            }
+            startActivity(Intent.createChooser(intent, "分享"))
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
