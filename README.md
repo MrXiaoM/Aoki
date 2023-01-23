@@ -14,6 +14,12 @@ i-style project 推出的[蒼姫ラピス (**Aoki** Lapis)](https://en.wikipedia
 
 </div>
 
+## 注意事项
+
+* 请确保你在**真实的** Android 设备上进行登录
+* 请确保你已在该 Android 设备登录了**官方的** QQ 客户端
+* Aoki 可以确保你在第一次登录时能够正常登录，不能保证已经触发过 235/237 的账号能登录
+
 ## 使用方法
 
 在**真实的** Android 手机上安装 Aoki，打开并按照引导进行登录。出现「登录成功」提示后，使用任何你能想到的方法将手机储存目录下的 `Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai` 文件夹传输到电脑上，可用的方法包括但不限于如下：
