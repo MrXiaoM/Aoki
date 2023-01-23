@@ -15,9 +15,11 @@
 ]]> </Data></string>
     <string name="prompt_qq">QQ号</string>
     <string name="prompt_password">密码</string>
+    <string name="tips_not_complete">那个…你好像忘了输入什么东西</string>
     <string name="action_accounts">账号管理</string>
     <string name="accounts_title">账号管理</string>
     <string name="accounts_message">你要对这个账号做什么</string>
+    <string name="accounts_operation_export">打包并发送到…</string>
     <string name="accounts_operation_del_device">删除设备信息 DEVICE.JSON</string>
     <string name="accounts_operation_del_cache">删除登录缓存</string>
     <string name="accounts_operation_del">删除所有数据</string>

@@ -182,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
         }
         fun login() {
             if (TextUtils.isEmpty(qq.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
-                Toast.makeText(this, "那个...你好像忘了输入什么东西", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show();
                 return;
             }
             loginViewModel.viewModelScope.launch {
@@ -260,7 +260,6 @@ class LoginActivity : AppCompatActivity() {
             """.trimIndent()
             )
             .buttonPositive(R.string.ok) { bot.close() }
-            .buttonNegative("打包并发送到…") {
                 try {
                     val account = bot.id
                     bot.close()
@@ -282,6 +281,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG)
                     }
                 }
+            .buttonNegative(R.string.accounts_operation_export) {
             }
             .show()
     }
