@@ -3,7 +3,7 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
 }
-val miraiVersion = "2.13.2"
+val miraiVersion = "2.13.4"
 
 android {
     namespace = "top.mrxiaom.mirai.aoki"

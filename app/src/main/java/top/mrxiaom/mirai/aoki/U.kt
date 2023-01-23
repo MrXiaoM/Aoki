@@ -25,7 +25,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-val miraiVersion = "2.13.2"
+const val miraiVersion = "2.13.4"
 object U {
     /**
      * 浏览器 UA，提取自 QQ 客户端 8.4.1
