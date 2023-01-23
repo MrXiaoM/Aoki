@@ -39,6 +39,7 @@ import java.net.URL
 import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 
 
 class LoginActivity : AppCompatActivity() {
@@ -186,6 +187,9 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            loading.visibility = View.VISIBLE
+            login.isClickable = false
             loginViewModel.viewModelScope.launch {
                 loginViewModel.login(
                     externalRoot,
@@ -202,12 +206,7 @@ class LoginActivity : AppCompatActivity() {
             }
             false
         }
-        login.setOnClickListener {
-            loading.visibility = View.VISIBLE
-            login.isClickable = false
-
-            login()
-        }
+        login.setOnClickListener { login() }
         accounts.setOnClickListener {
             val alert = AlertDialog.Builder(this)
                 .setTitle(R.string.accounts_title)
@@ -311,9 +310,9 @@ class LoginActivity : AppCompatActivity() {
                 override fun run() {
                     val diff = (System.currentTimeMillis() - lastRequested).milliseconds
                     isClickable = diff >= 1.minutes
-                    text = "$retry${if (isClickable) "" else " (${1.minutes - diff})"}"
+                    text = "$retry${if (isClickable) "" else " (${(1.minutes - diff).toInt(DurationUnit.SECONDS)})"}"
                 }
-            }, 1000L)
+            }, 1000L, 1000L)
         }
         requestSms()
         AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_send_title)
