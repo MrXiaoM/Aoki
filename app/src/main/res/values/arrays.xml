@@ -17,6 +17,7 @@
         <item>@string/accounts_operation_export</item>
         <item>@string/accounts_operation_del_device</item>
         <item>@string/accounts_operation_del_cache</item>
+        <item>@string/accounts_operation_del_cache_session</item>
         <item>@string/accounts_operation_del</item>
     </string-array>
 </resources>

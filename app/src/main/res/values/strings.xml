@@ -22,6 +22,7 @@
     <string name="accounts_operation_export">打包并发送到…</string>
     <string name="accounts_operation_del_device">删除设备信息 DEVICE.JSON</string>
     <string name="accounts_operation_del_cache">删除登录缓存</string>
+    <string name="accounts_operation_del_cache_session">删除登录会话</string>
     <string name="accounts_operation_del">删除所有数据</string>
     <string name="accounts_operation_done">操作完成</string>
     <string name="action_sign_in">登录</string>

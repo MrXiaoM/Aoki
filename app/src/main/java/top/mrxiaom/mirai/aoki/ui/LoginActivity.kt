@@ -23,6 +23,7 @@ import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
 import top.mrxiaom.mirai.aoki.*
+import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.U.buttonNegative
 import top.mrxiaom.mirai.aoki.U.buttonPositive
 import top.mrxiaom.mirai.aoki.U.mkdirsQuietly
@@ -176,7 +177,7 @@ class LoginActivity : AppCompatActivity() {
 
             loading.visibility = View.GONE
             if (loginResult.error != null) {
-                showLoginFailed(loginResult.error.stackTraceToString())
+                showLoginFailed(loginResult.error.analyze() + "\n" + loginResult.error.stackTraceToString())
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
@@ -225,7 +226,8 @@ class LoginActivity : AppCompatActivity() {
                             0 -> shareAccount(account)
                             1 -> File(folder, "device.json").delete()
                             2 -> File(folder, "cache").delete()
-                            3 -> folder.delete()
+                            3 -> deleteSession(File(folder, "cache"))
+                            4 -> folder.delete()
                         }
                         Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -236,6 +238,13 @@ class LoginActivity : AppCompatActivity() {
             }
             alert.show()
         }
+    }
+
+    /**
+     * 删除 session 开头的文件
+     **/
+    private fun deleteSession(cacheDir: File) {
+        cacheDir.listFiles { it -> it?.name?.startsWith("session", true) ?: false }?.forEach { it?.delete() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
