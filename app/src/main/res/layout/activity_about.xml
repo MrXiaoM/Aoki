@@ -14,10 +14,14 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:theme="?attr/actionBarTheme"
-                android:minHeight="?attr/actionBarSize" android:id="@+id/toolbar" app:title="@string/about_title"/>
+                android:minHeight="?attr/actionBarSize"
+                android:id="@+id/toolbar"
+                app:title="@string/about_title"/>
         <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:padding="5dp"/>
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

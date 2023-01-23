@@ -2,6 +2,7 @@ package top.mrxiaom.mirai.aoki.ui
 
 import android.os.Bundle
 import android.text.Html
+import android.text.method.LinkMovementMethod
 import androidx.appcompat.app.AppCompatActivity
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.U.text
@@ -16,6 +17,9 @@ class AboutActivity : AppCompatActivity() {
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.textView.text = Html.fromHtml(text(R.string.about_body), 0)
+        binding.textView.apply {
+            text = Html.fromHtml(text(R.string.about_body), 0)
+            movementMethod = LinkMovementMethod.getInstance()
+        }
     }
 }
