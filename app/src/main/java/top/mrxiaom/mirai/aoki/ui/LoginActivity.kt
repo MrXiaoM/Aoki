@@ -170,6 +170,7 @@ class LoginActivity : AppCompatActivity() {
                     def.complete(null)
                 }.show()
         }
+        // 接收登录结果
         loginViewModel.loginResult.observe(this) {
             val loginResult = it ?: return@observe
 
@@ -207,6 +208,7 @@ class LoginActivity : AppCompatActivity() {
             false
         }
         login.setOnClickListener { login() }
+        // 账号管理
         accounts.setOnClickListener {
             val alert = AlertDialog.Builder(this)
                 .setTitle(R.string.accounts_title)
@@ -241,6 +243,9 @@ class LoginActivity : AppCompatActivity() {
         return true
     }
 
+    /**
+     * 处理登录成功
+     */
     private fun updateUiWithUser(bot: Bot) {
         val avatar = runCatching {
             Drawable.createFromStream(URL(bot.avatarUrl).openStream(), "${bot.id}.png")
@@ -269,6 +274,9 @@ class LoginActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * 处理登录失败
+     */
     private fun showLoginFailed(errorString: String) {
         AlertDialog.Builder(this).setTitle(R.string.login_failed)
             .setMessage(errorString)
@@ -276,6 +284,9 @@ class LoginActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * 处理发送短信验证码
+     */
     private fun smsSent(def: CompletableDeferred<String?>, sms: DeviceVerificationRequests.SmsRequest) {
         var lastRequested = 0L
         fun requestSms() {
