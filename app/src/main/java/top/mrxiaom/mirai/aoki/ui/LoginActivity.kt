@@ -35,6 +35,7 @@ import top.mrxiaom.mirai.aoki.U.startActivityForResult
 import top.mrxiaom.mirai.aoki.U.text
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
+import top.mrxiaom.mirai.aoki.util.FileUtil
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -224,10 +225,11 @@ class LoginActivity : AppCompatActivity() {
                     .setItems(R.array.accounts_operation) { dialog, btn ->
                         when (btn) {
                             0 -> shareAccount(account)
-                            1 -> File(folder, "device.json").delete()
-                            2 -> File(folder, "cache").delete()
+                            1 -> FileUtil.delAllFile(File(folder, "device.json"))
+                            2 -> FileUtil.delAllFile(File(folder, "cache"))
+                            //TODO 并未发现以session开头的文件，故此行代码不做改动
                             3 -> deleteSession(File(folder, "cache"))
-                            4 -> folder.delete()
+                            4 -> FileUtil.delAllFile(folder)
                         }
                         Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
