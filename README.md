@@ -22,12 +22,25 @@ i-style project 推出的[蒼姫ラピス (**Aoki** Lapis)](https://en.wikipedia
 
 ## 使用方法
 
-在**真实的** Android 手机上安装 Aoki，打开并按照引导进行登录。出现「登录成功」提示后，使用任何你能想到的方法将手机储存目录下的 `Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai` 文件夹传输到电脑上，可用的方法包括但不限于如下：
+在**真实的** Android 手机上安装 Aoki，打开并按照引导进行登录。出现「登录成功」提示后，你可以
+
+### 压缩并分享
+
+登录成功后点击「打包并分享到…」，然后在弹出的分享面板中想办法将该文件发送到电脑上，比如 通过QQ文件传输助手发送到电脑，或者 使用蓝牙连接发送到电脑 等等。
+
+你也可以在「账号管理」中找到「打包并分享到…」。
+
+### 通过路径复制文件
+
+使用任何你能想到的方法将手机储存目录下的 `Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai` 文件夹传输到电脑上，可用的方法包括但不限于如下：
 
 * 使用数据线复制文件夹
 * 压缩文件夹，通过QQ文件传输助手发送到电脑
 
-将 `Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai` 文件夹内的 bots 文件夹覆盖到 MCL 目录，然后你就可以在 MCL 中登录你的账户了。
+--------------
+
+将从以上其中一种方法获得的 `bots` 文件夹中以qq号命名的文件夹，
+覆盖到 MCL 目录，然后你就可以在 MCL 中登录你的账户了。
 
 ## 下载
 
