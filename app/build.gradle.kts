@@ -15,8 +15,9 @@ android {
         targetSdk = 32
         versionCode = 2
         versionName = "1.1.1"
-    }
 
+        buildConfigField("String", "miraiVersion", "\"$miraiVersion\"")
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

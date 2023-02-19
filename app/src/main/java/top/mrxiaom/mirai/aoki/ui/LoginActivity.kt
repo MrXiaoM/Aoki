@@ -95,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
             val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
 
             text = """
-                Aoki $version, mirai $miraiVersion
+                Aoki $version, mirai ${BuildConfig.miraiVersion}
                 User Agent: ${U.userAgent}
                 """.trimIndent()
         }
