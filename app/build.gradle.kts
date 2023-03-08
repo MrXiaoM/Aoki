@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
 }
+// TODO: 更新到 2.15 时删除 top.mrxiaom.mirai.aoki.mirai.ProtocolHotfix
 val miraiVersion = "2.14.0"
 
 android {
