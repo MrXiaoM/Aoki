@@ -2,6 +2,7 @@ package top.mrxiaom.mirai.aoki
 
 import android.app.Application
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import top.mrxiaom.mirai.aoki.mirai.hotfixProtocolVersion
 import java.security.Security
 
 class MainApplication : Application() {
@@ -19,5 +20,6 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         setUpECDHEnvironment();
+        hotfixProtocolVersion()
     }
 }
