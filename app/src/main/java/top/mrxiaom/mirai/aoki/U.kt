@@ -18,7 +18,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.utils.BotConfiguration
 import net.mamoe.mirai.utils.DeviceInfo
-import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfoManager
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
