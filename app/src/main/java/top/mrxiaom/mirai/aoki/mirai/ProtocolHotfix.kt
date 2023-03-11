@@ -32,4 +32,16 @@ internal fun hotfixProtocolVersion() {
         1673599898L,
         19,
     )
+    MiraiProtocolInternal.protocols[BotConfiguration.MiraiProtocol.MACOS] = MiraiProtocolInternal(
+        "com.tencent.minihd.qq",
+        537128930,
+        "5.8.9",
+        "6.0.0.2433",
+        150470524,
+        66560,
+        1970400,
+        "AA 39 78 F4 1F D9 6F F9 91 4A 66 9E 18 64 74 C7",
+        1595836208L,
+        12,
+    )
 }
