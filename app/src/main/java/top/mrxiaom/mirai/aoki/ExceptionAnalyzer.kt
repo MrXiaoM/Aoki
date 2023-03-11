@@ -14,7 +14,7 @@ object ExceptionAnalyzer {
                 也有可能是你的账号已被腾讯催促更新QQ版本，
                 Aoki 现已整合 fix-protocol-version 的协议版本变更，
                 你可以尝试使用手机协议或平板协议进行登录。
-                登录成功后，请务必在你最终需要登录的地方，安装 fix-protocol-version 插件，并选择手机协议或平板协议。
+                登录成功后，请务必在你最终需要登录的地方，安装 fix-protocol-version 插件，并选择手机协议、平板协议或 MacOS 协议。
             """.trimIndent()
             msg.contains("code=237") -> """
                 出现了 237 错误，你的账号可能已被风控，请尝试以下方法解决:
@@ -27,7 +27,7 @@ object ExceptionAnalyzer {
             msg.contains("code=45") -> """
                 出现了 45 错误，你的账号已被风控，请尝试以下方法解决:
                 * 使用官方QQ客户端登录机器人账号，跟正常用户一样聊天、活跃，使你的设备被服务器认同。
-                * 在 mirai 协议版本更新之前，安装需 fix-protocol-version 插件，且必须选择手机协议或平板协议。
+                * 在 mirai 协议版本更新之前，安装需 fix-protocol-version 插件，且必须选择手机协议、平板协议或 MacOS 协议。
                 * Aoki 现已整合 fix-protocol-version 的协议版本变更。
             """.trimIndent()
             msg.contains("code=6") -> """
@@ -36,7 +36,7 @@ object ExceptionAnalyzer {
             """.trimIndent()
             msg.contains("code=238") -> """
                 出现了 238 错误，请尝试更换到手机协议或平板协议再试。
-                登录成功后，请务必在你最终需要登录的地方，安装 fix-protocol-version 插件，并选择手机协议或平板协议。
+                登录成功后，请务必在你最终需要登录的地方，安装 fix-protocol-version 插件，并选择手机协议、平板协议或 MacOS 协议。
                 Aoki 现已整合 fix-protocol-version 的协议版本变更。
             """.trimIndent()
             msg.contains("returnCode = -10003") -> """
