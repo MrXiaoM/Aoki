@@ -8,18 +8,18 @@ import java.security.Security
 class MainApplication : Application() {
 
     private fun setUpECDHEnvironment() {
-        val provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        val provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME)
         if (provider != null) {
             if (provider.javaClass != BouncyCastleProvider::class.java) {
-                Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-                Security.insertProviderAt(BouncyCastleProvider(), 1);
+                Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
+                Security.insertProviderAt(BouncyCastleProvider(), 1)
             }
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-        setUpECDHEnvironment();
+        setUpECDHEnvironment()
         hotfixProtocolVersion()
     }
 }

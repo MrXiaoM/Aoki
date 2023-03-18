@@ -124,46 +124,49 @@ class LoginActivity : AppCompatActivity() {
         }
         // 滑块验证请求
         loginViewModel.slideRequest.observe(this) {
-            val slideRequest = it ?: return@observe
-            startActivity<SlideActivity> {
-                putExtra("qq", slideRequest.bot.id)
-                putExtra("url", slideRequest.url)
+            it?.apply {
+                startActivity<SlideActivity> {
+                    putExtra("qq", bot.id)
+                    putExtra("url", url)
                     putExtra("ua", bot.configuration.protocol.userAgent)
+                }
             }
         }
         // 扫码验证请求
         loginViewModel.scanRequest.observe(this) {
-            val scanRequest = it ?: return@observe
-            startActivityForResult<ScanActivity>(1) {
-                putExtra("qq", scanRequest.bot.id)
-                putExtra("url", scanRequest.url)
+            it?.apply {
+                startActivityForResult<ScanActivity>(1) {
+                    putExtra("qq", bot.id)
+                    putExtra("url", url)
                     putExtra("ua", bot.configuration.protocol.userAgent)
+                }
             }
         }
         // 短信验证码请求
         loginViewModel.smsRequest.observe(this@LoginActivity) {
-            val smsRequest = it ?: return@observe
-            val def = AokiLoginSolver.smsDefList[smsRequest.bot.id] ?: return@observe
-            val phoneNumberFull = smsRequest.sms.run {
-                if (countryCode != null && phoneNumber != null)
-                    text(R.string.captcha_sms_request_phoneNumber)
-                        .replace("\$countryCode", countryCode.toString())
-                        .replace("\$phoneNumber", phoneNumber.toString())
-                else text(R.string.captcha_sms_request_phoneNumberNull)
-            }
-            AlertDialog.Builder(this).setTitle(R.string.captcha_sms_request_title)
-                .setCancelable(false)
-                .setMessage(R.string.captcha_sms_request_message) { text ->
-                    text.replace(
-                        "\$phoneNumberFull",
-                        phoneNumberFull
-                    )
+            it?.apply {
+                val def = AokiLoginSolver.smsDefList[bot.id] ?: return@observe
+                val phoneNumberFull = sms.run {
+                    if (countryCode != null && phoneNumber != null)
+                        text(R.string.captcha_sms_request_phoneNumber)
+                            .replace("\$countryCode", countryCode.toString())
+                            .replace("\$phoneNumber", phoneNumber.toString())
+                    else text(R.string.captcha_sms_request_phoneNumberNull)
                 }
-                .buttonPositive(R.string.captcha_sms_request_send) {
-                    smsSent(def, smsRequest.sms)
-                }.buttonNegative(R.string.captcha_sms_request_other) {
-                    def.complete(null)
-                }.show()
+                AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_request_title)
+                    .setCancelable(false)
+                    .setMessage(R.string.captcha_sms_request_message) { text ->
+                        text.replace(
+                            "\$phoneNumberFull",
+                            phoneNumberFull
+                        )
+                    }
+                    .buttonPositive(R.string.captcha_sms_request_send) {
+                        smsSent(def, sms)
+                    }.buttonNegative(R.string.captcha_sms_request_other) {
+                        def.complete(null)
+                    }.show()
+            }
         }
         // 接收登录结果
         loginViewModel.loginResult.observe(this) {
@@ -180,8 +183,8 @@ class LoginActivity : AppCompatActivity() {
         }
         fun login() {
             if (TextUtils.isEmpty(qq.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
-                Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show();
-                return;
+                Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show()
+                return
             }
 
             loading.visibility = View.VISIBLE
@@ -363,7 +366,7 @@ class LoginActivity : AppCompatActivity() {
     private fun share(fileName: String) {
         runInUIThread {
             val share = File(getExternalFilesDir(null), "AokiMirai/export/$fileName")
-            val uri = FileProvider.getUriForFile(this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", share);
+            val uri = FileProvider.getUriForFile(this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", share)
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
