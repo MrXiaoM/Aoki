@@ -1,11 +1,10 @@
 package top.mrxiaom.mirai.aoki
 
-import android.os.Environment
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.BotFactory
 import net.mamoe.mirai.utils.BotConfiguration
-import top.mrxiaom.mirai.aoki.U.mkdirsQuietly
 import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfo.fileBasedDeviceInfoAndroid
+import top.mrxiaom.mirai.aoki.util.mkdirsQuietly
 import java.io.File
 
 object BotManager {

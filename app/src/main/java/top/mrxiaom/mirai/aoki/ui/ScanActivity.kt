@@ -8,10 +8,7 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
-import androidx.core.view.get
 import top.mrxiaom.mirai.aoki.R
-import top.mrxiaom.mirai.aoki.U
-import top.mrxiaom.mirai.aoki.U.startActivity
 import top.mrxiaom.mirai.aoki.databinding.ActivityScanBinding
 
 class ScanActivity : AppCompatActivity() {

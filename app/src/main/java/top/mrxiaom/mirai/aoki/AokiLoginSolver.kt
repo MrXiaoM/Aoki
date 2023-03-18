@@ -1,6 +1,7 @@
 package top.mrxiaom.mirai.aoki
 
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,8 +13,8 @@ import net.mamoe.mirai.utils.BotConfiguration
 import net.mamoe.mirai.utils.DeviceVerificationRequests
 import net.mamoe.mirai.utils.DeviceVerificationResult
 import net.mamoe.mirai.utils.LoginSolver
-import top.mrxiaom.mirai.aoki.U.buttonPositive
 import top.mrxiaom.mirai.aoki.ui.LoginActivity
+import top.mrxiaom.mirai.aoki.util.buttonPositive
 
 class SlideRequest(
     val bot: Bot,

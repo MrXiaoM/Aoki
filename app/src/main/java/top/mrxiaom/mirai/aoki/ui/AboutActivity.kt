@@ -5,8 +5,8 @@ import android.text.Html
 import android.text.method.LinkMovementMethod
 import androidx.appcompat.app.AppCompatActivity
 import top.mrxiaom.mirai.aoki.R
-import top.mrxiaom.mirai.aoki.U.text
 import top.mrxiaom.mirai.aoki.databinding.ActivityAboutBinding
+import top.mrxiaom.mirai.aoki.util.text
 
 class AboutActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAboutBinding

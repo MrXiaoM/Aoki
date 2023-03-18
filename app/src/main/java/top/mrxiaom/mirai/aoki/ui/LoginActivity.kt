@@ -24,18 +24,9 @@ import net.mamoe.mirai.utils.DeviceVerificationRequests
 import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
-import top.mrxiaom.mirai.aoki.U.buttonNegative
-import top.mrxiaom.mirai.aoki.U.buttonPositive
-import top.mrxiaom.mirai.aoki.U.mkdirsQuietly
-import top.mrxiaom.mirai.aoki.U.needPermission
-import top.mrxiaom.mirai.aoki.U.onItemSelected
-import top.mrxiaom.mirai.aoki.U.setMessage
-import top.mrxiaom.mirai.aoki.U.startActivity
-import top.mrxiaom.mirai.aoki.U.startActivityForResult
-import top.mrxiaom.mirai.aoki.U.text
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
-import top.mrxiaom.mirai.aoki.util.delFolder
+import top.mrxiaom.mirai.aoki.util.*
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -96,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
 
             text = """
                 Aoki $version, mirai ${BuildConstants.miraiVersion}
-                User Agent: ${U.userAgent}
+                User Agent (ANDROID_PHONE): ${MiraiProtocol.ANDROID_PHONE.userAgent}
                 """.trimIndent()
         }
         val protocols = arrayOf(
@@ -357,7 +348,7 @@ class LoginActivity : AppCompatActivity() {
             val src = File(externalRoot, "bots/$account")
             val zip = File(externalRoot, "export/$account.zip")
             if (zip.exists()) zip.delete()
-            U.zip(src, zip)
+            zip(src, zip)
             share("$account.zip")
         } catch (t: Throwable) {
             runInUIThread {

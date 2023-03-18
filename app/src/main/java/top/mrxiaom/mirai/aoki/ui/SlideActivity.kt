@@ -9,7 +9,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import top.mrxiaom.mirai.aoki.AokiLoginSolver
 import top.mrxiaom.mirai.aoki.R
-import top.mrxiaom.mirai.aoki.U
 import top.mrxiaom.mirai.aoki.databinding.ActivitySlideBinding
 
 /**
