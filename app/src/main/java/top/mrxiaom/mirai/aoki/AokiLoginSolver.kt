@@ -7,6 +7,8 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.CompletableDeferred
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.internal.utils.*
+import net.mamoe.mirai.utils.BotConfiguration
 import net.mamoe.mirai.utils.DeviceVerificationRequests
 import net.mamoe.mirai.utils.DeviceVerificationResult
 import net.mamoe.mirai.utils.LoginSolver
@@ -29,6 +31,58 @@ class ScanRequest(
 )
 
 object AokiLoginSolver : LoginSolver() {
+
+    /**
+     * 浏览器 UA，提取自 QQ 客户端 8.8.83
+     *
+     * 手机 QQ 内置浏览器访问 https://ie.icoa.cn/ 即可获取 UA
+     */
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    val BotConfiguration.MiraiProtocol.userAgent: String
+        get() {
+            var screenHeight = 0
+            var pixel = 720
+            loginActivity?.apply {
+                val resourceId = applicationContext.resources.getIdentifier("status_bar_height", "dimen", "android")
+                if (resourceId > 0) {
+                    screenHeight = applicationContext.resources.getDimensionPixelSize(resourceId)
+                }
+                pixel = windowManager.maximumWindowMetrics.bounds.width()
+            }
+            val meta = MiraiProtocolInternal[this]
+            val qqVersion = meta.ver
+            val version = qqVersion.split(".")
+            val AVersion = version
+            // 8.8.83_2654 暂时不明尾数的含义
+            val SQVersion = "${version[0]}.${version[1]}.${version[2]}_2654"
+            // 不清楚这个 appId 与 meta.id 是否相同，待验证
+            val appId = 537114588
+            return arrayOf(
+                "Mozilla/5.0",
+                "(Linux; Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID}; wv)",
+                "AppleWebKit/537.36",
+                "(KHTML, like Gecko)",
+                "Version/4.0",
+                "Chrome/105.0.5195.136",
+                "Mobile",
+                "Safari/537.36",
+                "V1_AND_SQ_${SQVersion}_YYB_D",
+                "A_$AVersion",
+                "QQ/$qqVersion",
+                "NetType/4G",
+                "WebP/0.4.1",
+                "Pixel/$pixel",
+                "StatusBarHeight/$screenHeight",
+                "SimpleUISwitch/0",
+                "QQTheme/2006078",
+                "InMagicWin/0",
+                "StudyMode/0",
+                "CurrentMode/0",
+                "CurrentFontScale/1.0",
+                "GlobalDensityScale/0.9",
+                "AppId/$appId"
+            ).joinToString(" ")
+        }
     val slideDefList = mutableMapOf<Long, CompletableDeferred<String>>()
     val smsDefList = mutableMapOf<Long, CompletableDeferred<String?>>()
     val scanDefList = mutableMapOf<Long, CompletableDeferred<Any>>()

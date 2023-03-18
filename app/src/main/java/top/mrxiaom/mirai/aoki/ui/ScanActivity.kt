@@ -27,13 +27,15 @@ class ScanActivity : AppCompatActivity() {
         qq = intent.getLongExtra("qq", 0)
         if (qq == 0L) finish().let { return }
         val url = intent.getStringExtra("url") ?: finish().let { return }
+        val userAgent = intent.getStringExtra("ua") ?: finish().let { return }
+
         setResult(RESULT_OK, Intent().putExtra("qq", qq))
 
         val webView = binding.webView
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
-            userAgentString = U.userAgent
+            userAgentString = userAgent
         }
 
         binding.toolbar.setOnMenuItemClickListener {

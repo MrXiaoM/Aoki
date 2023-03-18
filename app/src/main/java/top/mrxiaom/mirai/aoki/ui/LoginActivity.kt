@@ -22,6 +22,7 @@ import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
 import top.mrxiaom.mirai.aoki.*
+import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.U.buttonNegative
 import top.mrxiaom.mirai.aoki.U.buttonPositive
@@ -136,6 +137,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity<SlideActivity> {
                 putExtra("qq", slideRequest.bot.id)
                 putExtra("url", slideRequest.url)
+                    putExtra("ua", bot.configuration.protocol.userAgent)
             }
         }
         // 扫码验证请求
@@ -144,6 +146,7 @@ class LoginActivity : AppCompatActivity() {
             startActivityForResult<ScanActivity>(1) {
                 putExtra("qq", scanRequest.bot.id)
                 putExtra("url", scanRequest.url)
+                    putExtra("ua", bot.configuration.protocol.userAgent)
             }
         }
         // 短信验证码请求

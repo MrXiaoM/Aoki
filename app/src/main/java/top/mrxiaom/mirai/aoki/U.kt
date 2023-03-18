@@ -25,27 +25,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 object U {
-    /**
-     * 浏览器 UA，提取自 QQ 客户端 8.4.1
-     */
-    val userAgent: String = arrayOf(
-        "Mozilla/5.0",
-        "(Linux; Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID}; wv)",
-        "AppleWebKit/537.36",
-        "(KHTML, like Gecko)",
-        "Version/4.0",
-        "Chrome/105.0.5195.136",
-        "Mobile",
-        "Safari/537.36",
-        "V1_AND_SQ_8.4.1_1442_YYB_D",
-        "QQ/8.4.1.4680",
-        "NetType/4G",
-        "WebP/0.4.1",
-        "Pixel/720",
-        "StatusBarHeight/49",
-        "SimpleUISwitch/0",
-        "QQTheme/2040"
-    ).joinToString(" ")
 
     inline fun <reified T> AppCompatActivity.startActivity(
         conf: Intent.() -> Unit = {}
