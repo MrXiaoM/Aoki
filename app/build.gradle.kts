@@ -3,9 +3,10 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
 }
-// TODO: 更新到 2.15 时删除 top.mrxiaom.mirai.aoki.mirai.ProtocolHotfix
-val miraiVersion = "2.14.0"
-
+val miraiVersion = "2.15.0-dev-27"
+repositories {
+    maven("https://repo.mirai.mamoe.net/snapshots")
+}
 android {
     namespace = "top.mrxiaom.mirai.aoki"
     compileSdk = 32
@@ -53,5 +54,6 @@ dependencies {
     implementation("net.mamoe:mirai-core-utils:$miraiVersion")
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.56")
+    implementation("androidx.preference:preference:1.2.0")
 
 }
