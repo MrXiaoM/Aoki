@@ -47,6 +47,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.1")
+    implementation("androidx.preference:preference:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
@@ -54,6 +56,4 @@ dependencies {
     implementation("net.mamoe:mirai-core-utils:$miraiVersion")
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.56")
-    implementation("androidx.preference:preference:1.2.0")
-
 }
