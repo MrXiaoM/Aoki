@@ -8,28 +8,18 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.CompletableDeferred
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.auth.QRCodeLoginListener
 import net.mamoe.mirai.internal.utils.*
 import net.mamoe.mirai.utils.BotConfiguration
 import net.mamoe.mirai.utils.DeviceVerificationRequests
 import net.mamoe.mirai.utils.DeviceVerificationResult
 import net.mamoe.mirai.utils.LoginSolver
 import top.mrxiaom.mirai.aoki.ui.LoginActivity
+import top.mrxiaom.mirai.aoki.ui.model.QRLoginRequest
+import top.mrxiaom.mirai.aoki.ui.model.ScanRequest
+import top.mrxiaom.mirai.aoki.ui.model.SlideRequest
+import top.mrxiaom.mirai.aoki.ui.model.SmsRequest
 import top.mrxiaom.mirai.aoki.util.buttonPositive
-
-class SlideRequest(
-    val bot: Bot,
-    val url: String
-)
-
-class SmsRequest(
-    val bot: Bot,
-    val sms: DeviceVerificationRequests.SmsRequest
-)
-
-class ScanRequest(
-    val bot: Bot,
-    val url: String
-)
 
 object AokiLoginSolver : LoginSolver() {
 
@@ -167,5 +157,25 @@ object AokiLoginSolver : LoginSolver() {
             loginViewModel._smsRequest.value = SmsRequest(bot, sms)
         }
         return def.await()?.let { sms.solved(it) }
+    }
+
+    /**
+     * 二维码登录
+     */
+    override fun createQRCodeLoginListener(bot: Bot): QRCodeLoginListener = object : QRCodeLoginListener {
+        override val qrCodeMargin: Int get() = 5
+        override val qrCodeSize: Int get() = 2
+
+        override fun onFetchQRCode(bot: Bot, data: ByteArray) {
+            loginActivity?.runInUIThread {
+                loginViewModel._qrloginRequest.value = QRLoginRequest(bot, data, null)
+            }
+        }
+
+        override fun onStateChanged(bot: Bot, state: QRCodeLoginListener.State) {
+            loginActivity?.runInUIThread {
+                loginViewModel._qrloginRequest.value = QRLoginRequest(bot, null, state)
+            }
+        }
     }
 }

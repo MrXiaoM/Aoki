@@ -4,7 +4,8 @@
     <string name="cancel">取消</string>
     <string name="about">关于…</string>
     <string name="about_title">关于 Aoki</string>
-    <string name="about_body"><Data><![CDATA[
+    <string name="about_body">
+        <Data><![CDATA[
 <p>©<a href="https://mrxiaom.top/" target="_blank">人间工作</a> 2022 保留所有权利</p>
 
 <p>该应用程序基于 mirai 开发，使用 AGPL-3.0 许可证开源</p>
@@ -12,11 +13,13 @@
 <li><a href="https://github.com/mamoe/mirai" target="_blank">https://github.com/mamoe/mirai</a></li>
 <li><a href="https://github.com/MrXiaoM/Aoki" target="_blank">https://github.com/MrXiaoM/Aoki</a></li>
 </ul>
-]]> </Data></string>
+]]> </Data>
+    </string>
     <string name="prompt_qq">QQ号</string>
     <string name="prompt_password">密码</string>
     <string name="tips_not_complete">那个…你好像忘了输入什么东西</string>
     <string name="action_accounts">账号管理</string>
+    <string name="action_check_qrlogin">扫码登录(需要另一台 Android 手机)</string>
     <string name="accounts_title">账号管理</string>
     <string name="accounts_message">你要对这个账号做什么</string>
     <string name="accounts_operation_export">打包并发送到…</string>
@@ -26,6 +29,7 @@
     <string name="accounts_operation_del">删除所有数据</string>
     <string name="accounts_operation_done">操作完成</string>
     <string name="action_sign_in">登录</string>
+    <string name="login_confirm">是否登录</string>
     <string name="login_failed">"登录失败"</string>
     <string name="login_slide_needed">"需要滑块验证"</string>
     <string name="slide_title">滑块验证</string>
@@ -39,7 +43,9 @@
     <string name="captcha_sms_request_title">需要登录验证</string>
     <string name="captcha_sms_request_phoneNumber">(+$countryCode) $phoneNumber</string>
     <string name="captcha_sms_request_phoneNumberNull">(无法获取到手机号码)</string>
-    <string name="captcha_sms_request_message">一条短信验证码将发送到你的手机 $phoneNumberFull. 运营商可能会收取正常短信费用, 是否继续? </string>
+    <string name="captcha_sms_request_message">一条短信验证码将发送到你的手机 $phoneNumberFull. 运营商可能会收取正常短信费用,
+        是否继续?
+    </string>
     <string name="captcha_sms_request_send">发送验证码</string>
     <string name="captcha_sms_request_other">其他验证方式</string>
     <string name="captcha_sms_send_title">验证码已发送</string>

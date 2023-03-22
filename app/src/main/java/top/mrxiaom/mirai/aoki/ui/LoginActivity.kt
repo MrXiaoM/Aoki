@@ -18,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.auth.QRCodeLoginListener
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
@@ -74,6 +75,7 @@ class LoginActivity : AppCompatActivity() {
         val qq = binding.qq
         val password = binding.password
         val login = binding.login
+        val checkQRLogin = binding.checkQrlogin
         val accounts = binding.accounts
         val loading = binding.loading
         binding.toolbar.setOnMenuItemClickListener {
@@ -89,6 +91,9 @@ class LoginActivity : AppCompatActivity() {
                 Aoki $version, mirai ${BuildConstants.miraiVersion}
                 User Agent (ANDROID_PHONE): ${MiraiProtocol.ANDROID_PHONE.userAgent}
                 """.trimIndent()
+        }
+        checkQRLogin.setOnCheckedChangeListener { _, isChecked ->
+            password.visibility = if (isChecked) View.INVISIBLE else View.VISIBLE
         }
         val protocols = arrayOf(
             MiraiProtocol.ANDROID_PHONE,
@@ -168,6 +173,25 @@ class LoginActivity : AppCompatActivity() {
                     }.show()
             }
         }
+        // 扫码登录
+        loginViewModel.qrloginRequest.observe(this) {
+            it?.apply {
+                it.qrcode?.apply {
+                    TODO("显示二维码")
+                }
+                it.state?.apply {
+                    val message = when (state) {
+                        QRCodeLoginListener.State.WAITING_FOR_SCAN -> "等待扫描二维码中"
+                        QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> "扫描完成，请在手机 QQ 确认登录"
+                        QRCodeLoginListener.State.CANCELLED -> "已取消登录，将会重新获取二维码"
+                        QRCodeLoginListener.State.TIMEOUT -> "扫描超时，将会重新获取二维码"
+                        QRCodeLoginListener.State.CONFIRMED -> "已确认登录"
+                        else -> null
+                    }
+                    TODO("显示状态")
+                }
+            }
+        }
         // 接收登录结果
         loginViewModel.loginResult.observe(this) {
             val loginResult = it ?: return@observe
@@ -189,13 +213,31 @@ class LoginActivity : AppCompatActivity() {
 
             loading.visibility = View.VISIBLE
             login.isClickable = false
-            loginViewModel.viewModelScope.launch {
-                loginViewModel.login(
-                    externalRoot,
-                    qq.text.toString().toLong(),
-                    password.text.toString()
-                )
-            }
+            val bot = if (checkQRLogin.isChecked) BotManager.newBotQRLogin(
+                externalRoot,
+                qq.text.toString().toLong()
+            )
+            else BotManager.newBot(
+                externalRoot,
+                qq.text.toString().toLong(),
+                password.text.toString()
+            )
+            AlertDialog.Builder(this@LoginActivity)
+                .setTitle(R.string.login_confirm)
+                .setCancelable(false)
+                .buttonPositive(R.string.edit_device_action) {
+                    startActivity<EditDeviceInfoActivity> {
+                        putExtra("qq", bot.id)
+                    }
+                    dismiss()
+                }
+                .buttonNeutral(R.string.ok) {
+                    loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
+                    dismiss()
+                }
+                .buttonNegative(R.string.cancel) { dismiss() }
+                .show()
+
         }
         password.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
