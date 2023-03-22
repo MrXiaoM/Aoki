@@ -6,9 +6,6 @@ plugins {
     kotlin("plugin.serialization")
 }
 val miraiVersion = "2.15.0-dev-27"
-repositories {
-    maven("https://repo.mirai.mamoe.net/snapshots")
-}
 android {
     namespace = "top.mrxiaom.mirai.aoki"
     compileSdk = 32
