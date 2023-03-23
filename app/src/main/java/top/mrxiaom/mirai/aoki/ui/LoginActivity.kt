@@ -225,13 +225,13 @@ class LoginActivity : AppCompatActivity() {
             AlertDialog.Builder(this@LoginActivity)
                 .setTitle(R.string.login_confirm)
                 .setCancelable(false)
-                .buttonPositive(R.string.edit_device_action) {
+                .buttonNeutral(R.string.edit_device_action) {
                     startActivity<EditDeviceInfoActivity> {
                         putExtra("qq", bot.id)
                     }
                     dismiss()
                 }
-                .buttonNeutral(R.string.ok) {
+                .buttonPositive(R.string.ok) {
                     loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
                     dismiss()
                 }
