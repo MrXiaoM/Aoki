@@ -58,7 +58,7 @@ object AokiLoginSolver : LoginSolver() {
                 "Mobile",
                 "Safari/537.36",
                 "V1_AND_SQ_${SQVersion}_YYB_D",
-                "A_$AVersion",
+                /*"A_$AVersion", // 待处理 */
                 "QQ/$qqVersion",
                 "NetType/4G",
                 "WebP/0.4.1",
