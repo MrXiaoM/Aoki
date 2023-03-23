@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+            app:key="name"
+            app:title="设备名"
+            app:useSimpleSummaryProvider="true"
+            app:dialogTitle="设备名"/>
+    <EditTextPreference
+            app:key="version"
+            app:title="设备版本"
+            app:useSimpleSummaryProvider="true"
+            app:dialogTitle="设备版本"/>
+    <EditTextPreference
+            app:key="network"
+            app:title="网络类型"
+            app:useSimpleSummaryProvider="true"
+            app:dialogTitle="网络类型"/>
+
+</PreferenceScreen>
