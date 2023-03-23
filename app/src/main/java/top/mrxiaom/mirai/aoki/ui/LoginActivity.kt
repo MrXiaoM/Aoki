@@ -206,7 +206,7 @@ class LoginActivity : AppCompatActivity() {
             login.isClickable = true
         }
         fun login() {
-            if (TextUtils.isEmpty(qq.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
+            if (TextUtils.isEmpty(qq.text.toString()) || (!checkQRLogin.isChecked && TextUtils.isEmpty(password.text.toString()))) {
                 Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show()
                 return
             }
