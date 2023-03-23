@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -42,6 +43,12 @@ class LoginActivity : AppCompatActivity() {
     internal val loginViewModel = LoginViewModel()
     private lateinit var binding: ActivityLoginBinding
     private lateinit var externalRoot: File
+    private lateinit var qq: EditText
+    private lateinit var password: EditText
+    private lateinit var login: Button
+    private lateinit var checkQRLogin: CheckBox
+    private lateinit var accounts: Button
+    private lateinit var loading: ProgressBar
     fun runInUIThread(action: LoginActivity.() -> Unit) {
         mHandler.post { action() }
     }
@@ -72,61 +79,41 @@ class LoginActivity : AppCompatActivity() {
             Manifest.permission.INTERNET
         )
 
-        val qq = binding.qq
-        val password = binding.password
-        val login = binding.login
-        val checkQRLogin = binding.checkQrlogin
-        val accounts = binding.accounts
-        val loading = binding.loading
+        this.qq = binding.qq
+        this.password = binding.password
+        this.login = binding.login
+        this.checkQRLogin = binding.checkQrlogin
+        this.accounts = binding.accounts
+        this.loading = binding.loading
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.toolbar_about -> startActivity<AboutActivity>()
             }
             return@setOnMenuItemClickListener false
         }
-        binding.infomation.apply {
-            val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
-
-            text = """
-                Aoki $version, mirai ${BuildConstants.miraiVersion}
-                User Agent (ANDROID_PHONE): ${MiraiProtocol.ANDROID_PHONE.userAgent}
-                """.trimIndent()
-        }
+        updateFooter()
         checkQRLogin.setOnCheckedChangeListener { _, isChecked ->
             password.visibility = if (isChecked) View.INVISIBLE else View.VISIBLE
         }
-        val protocols = arrayOf(
+        setupDropdownBox(
+            binding.protocol,
+            R.array.spinner_protocol,
             MiraiProtocol.ANDROID_PHONE,
             MiraiProtocol.ANDROID_PAD,
             MiraiProtocol.ANDROID_WATCH,
             MiraiProtocol.IPAD,
-            MiraiProtocol.MACOS,
-        )
-        val protocol = binding.protocol
-        protocol.adapter =
-            ArrayAdapter.createFromResource(this, R.array.spinner_protocol, android.R.layout.simple_spinner_item)
-                .apply {
-                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                }
-        protocol.onItemSelected {
-            if (it < 0) return@onItemSelected
-            BotManager.defaultProtocol = protocols[it]
+            MiraiProtocol.MACOS
+        ) { _, protocol ->
+            BotManager.defaultProtocol = protocol
+            updateFooter()
         }
-        val hbStrategies = arrayOf(
+        setupDropdownBox(
+            binding.hbStrategy,
+            R.array.spinner_hb_strategy,
             HeartbeatStrategy.STAT_HB,
             HeartbeatStrategy.REGISTER,
-            HeartbeatStrategy.NONE,
-        )
-        val hbStrategy = binding.hbStrategy
-        hbStrategy.adapter =
-            ArrayAdapter.createFromResource(this, R.array.spinner_hb_strategy, android.R.layout.simple_spinner_item)
-                .apply {
-                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                }
-        hbStrategy.onItemSelected {
-            if (it < 0) return@onItemSelected
-            BotManager.defaultHbStrategy = hbStrategies[it]
-        }
+            HeartbeatStrategy.NONE
+        ) { _, hbStrategy -> BotManager.defaultHbStrategy = hbStrategy }
         // 滑块验证请求
         loginViewModel.slideRequest.observe(this) {
             it?.apply {
@@ -205,79 +192,112 @@ class LoginActivity : AppCompatActivity() {
             }
             login.isClickable = true
         }
-        fun login() {
-            if (TextUtils.isEmpty(qq.text.toString()) || (!checkQRLogin.isChecked && TextUtils.isEmpty(password.text.toString()))) {
-                Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            loading.visibility = View.VISIBLE
-            login.isClickable = false
-            val bot = if (checkQRLogin.isChecked) BotManager.newBotQRLogin(
-                externalRoot,
-                qq.text.toString().toLong()
-            )
-            else BotManager.newBot(
-                externalRoot,
-                qq.text.toString().toLong(),
-                password.text.toString()
-            )
-            AlertDialog.Builder(this@LoginActivity)
-                .setTitle(R.string.login_confirm)
-                .setCancelable(false)
-                .buttonNeutral(R.string.edit_device_action) {
-                    startActivity<EditDeviceInfoActivity> {
-                        putExtra("qq", bot.id)
-                    }
-                    dismiss()
-                }
-                .buttonPositive(R.string.ok) {
-                    loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
-                    dismiss()
-                }
-                .buttonNegative(R.string.cancel) { dismiss() }
-                .show()
-
+        qq.setOnEditorActionListener { _, actionId, _ ->
+            if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login()
+            false
         }
         password.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    login()
-                }
-            }
+            if (actionId == EditorInfo.IME_ACTION_DONE) login()
             false
         }
         login.setOnClickListener { login() }
-        // 账号管理
-        accounts.setOnClickListener {
-            val alert = AlertDialog.Builder(this)
-                .setTitle(R.string.accounts_title)
-                .buttonNegative(R.string.cancel)
-            val accountList = File(externalRoot, "bots").listFiles()?.mapNotNull {
-                it.name.toLongOrNull()
-            }?.map { it.toString() }?.toTypedArray()
-            if (!accountList.isNullOrEmpty()) alert.setItems(accountList) { topDialog, i ->
-                val account = accountList[i]
-                val folder = File(externalRoot, "bots/$account")
-                AlertDialog.Builder(this).setTitle(account)
-                    .setItems(R.array.accounts_operation) { dialog, btn ->
-                        when (btn) {
-                            0 -> shareAccount(account)
-                            1 -> folder.delFolder("device.json")
-                            2 -> folder.delFolder("cache")
-                            //TODO 并未发现以session开头的文件，故此行代码不做改动
-                            3 -> deleteSession(File(folder, "cache"))
-                            4 -> delFolder(folder)
-                        }
-                        Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                        topDialog.dismiss()
-                    }
-                    .buttonNegative(R.string.cancel)
-                    .show()
-            }
-            alert.show()
+        accounts.setOnClickListener(this::accountManage)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+    }
+    private fun <T> setupDropdownBox(
+        dropdownBox: Spinner,
+        @IdRes array: Int,
+        vararg values: T,
+        onSelected: (i: Int, value: T) -> Unit
+    ) {
+        dropdownBox.adapter =
+            ArrayAdapter.createFromResource(this, array, android.R.layout.simple_spinner_item)
+                .also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        dropdownBox.onItemSelected {
+            if (it < 0) return@onItemSelected
+            onSelected(it, values[it])
         }
+    }
+    private fun updateFooter() {
+        binding.infomation.apply {
+            val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
+
+            text = """
+                Aoki $version, mirai ${BuildConstants.miraiVersion}
+                User Agent (${BotManager.defaultProtocol}): ${BotManager.defaultProtocol.userAgent}
+                """.trimIndent()
+        }
+    }
+    private fun login() {
+        if (TextUtils.isEmpty(qq.text.toString()) || (!checkQRLogin.isChecked && TextUtils.isEmpty(password.text.toString()))) {
+            Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        loading.visibility = View.VISIBLE
+        login.isClickable = false
+        val bot = if (checkQRLogin.isChecked) BotManager.newBotQRLogin(
+            externalRoot,
+            qq.text.toString().toLong()
+        )
+        else BotManager.newBot(
+            externalRoot,
+            qq.text.toString().toLong(),
+            password.text.toString()
+        )
+        AlertDialog.Builder(this@LoginActivity)
+            .setTitle(R.string.login_confirm)
+            .setCancelable(false)
+            .buttonNeutral(R.string.edit_device_action) {
+                startActivity<EditDeviceInfoActivity> {
+                    putExtra("qq", bot.id)
+                }
+                loading.visibility = View.INVISIBLE
+                login.isClickable = true
+                dismiss()
+            }
+            .buttonPositive(R.string.ok) {
+                loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
+                dismiss()
+            }
+            .buttonNegative(R.string.cancel) {
+                loading.visibility = View.INVISIBLE
+                login.isClickable = true
+                dismiss()
+            }
+            .show()
+    }
+    /**
+     * 账号管理
+     */
+    private fun accountManage(view: View) {
+        val alert = AlertDialog.Builder(this)
+            .setTitle(R.string.accounts_title)
+            .buttonNegative(R.string.cancel)
+        val accountList = File(externalRoot, "bots").listFiles()?.mapNotNull {
+            it.name.toLongOrNull()
+        }?.map { it.toString() }?.toTypedArray()
+        if (!accountList.isNullOrEmpty()) alert.setItems(accountList) { topDialog, i ->
+            val account = accountList[i]
+            val folder = File(externalRoot, "bots/$account")
+            AlertDialog.Builder(this).setTitle(account)
+                .setItems(R.array.accounts_operation) { dialog, btn ->
+                    when (btn) {
+                        0 -> shareAccount(account)
+                        1 -> folder.delFolder("device.json")
+                        2 -> folder.delFolder("cache")
+                        //TODO 并未发现以session开头的文件，故此行代码不做改动
+                        3 -> deleteSession(File(folder, "cache"))
+                        4 -> delFolder(folder)
+                    }
+                    Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                    topDialog.dismiss()
+                }
+                .buttonNegative(R.string.cancel)
+                .show()
+        }
+        alert.show()
     }
 
     /**
