@@ -33,8 +33,8 @@ object AokiDeviceInfo {
                         Build.BOOTLOADER.toByteArray(),
                         Build.FINGERPRINT.toByteArray(),
                         bootId,
-                        procVersion,
-                        baseBand,
+                        kernelInfo.toByteArray(),
+                        baseBandVersion?.toByteArray() ?: baseBand,
                         version,
                         simInfo,
                         osType,
@@ -50,3 +50,13 @@ object AokiDeviceInfo {
         }
     }
 }
+
+val baseBandVersion: String?
+    get() = runCatching {
+        Class.forName("android.os.SystemProperties")
+            .getMethod("get", String::class.java, String::class.java).invoke(
+                null, "gsm.version.baseband", null
+            )?.toString()
+    }.getOrNull()
+
+val kernelInfo: String = android.system.Os.uname().release
