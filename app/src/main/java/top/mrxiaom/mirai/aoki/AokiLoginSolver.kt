@@ -2,6 +2,7 @@ package top.mrxiaom.mirai.aoki
 
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.DisplayMetrics
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -31,15 +32,9 @@ object AokiLoginSolver : LoginSolver() {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     val BotConfiguration.MiraiProtocol.userAgent: String
         get() {
-            var screenHeight = 0
-            var pixel = 720
-            loginActivity?.apply {
-                val resourceId = applicationContext.resources.getIdentifier("status_bar_height", "dimen", "android")
-                if (resourceId > 0) {
-                    screenHeight = applicationContext.resources.getDimensionPixelSize(resourceId)
-                }
-                pixel = windowManager.maximumWindowMetrics.bounds.width()
-            }
+            val display = DisplayMetrics()
+            val screenHeight = display.heightPixels
+            val pixel = display.widthPixels
             val meta = MiraiProtocolInternal[this]
             val qqVersion = meta.ver
             val version = qqVersion.split(".")
