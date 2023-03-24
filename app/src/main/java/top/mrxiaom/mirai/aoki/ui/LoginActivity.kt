@@ -49,6 +49,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var checkQRLogin: CheckBox
     private lateinit var accounts: Button
     private lateinit var loading: ProgressBar
+    private lateinit var qrcodeImage: ImageView
+    private lateinit var qrcodeInfo: TextView
+    private lateinit var qrloginDialog: AlertDialog
     fun runInUIThread(action: LoginActivity.() -> Unit) {
         mHandler.post { action() }
     }
@@ -78,6 +81,27 @@ class LoginActivity : AppCompatActivity() {
             1,
             Manifest.permission.INTERNET
         )
+        qrloginDialog = AlertDialog.Builder(this)
+            .setTitle(R.string.qrlogin_title)
+            .setView(LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(TextView(this@LoginActivity).apply {
+                    text(R.string.qrlogin_description)
+                })
+                addView(ImageView(this@LoginActivity).apply {
+
+                    qrcodeImage = this
+                })
+                addView(TextView(this@LoginActivity).apply {
+
+                    qrcodeInfo = this
+                })
+            })
+            .buttonNegative(R.string.cancel) {
+                // TODO 取消登录
+                dismiss()
+            }
+            .create()
 
         this.qq = binding.qq
         this.password = binding.password
@@ -164,7 +188,9 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.qrloginRequest.observe(this) {
             it?.apply {
                 it.qrcode?.apply {
-                    TODO("显示二维码")
+                    // TODO 显示二维码
+                    qrcodeImage.setImage(this)
+                    if (!qrloginDialog.isShowing) qrloginDialog.show()
                 }
                 it.state?.apply {
                     val message = when (state) {
@@ -175,7 +201,8 @@ class LoginActivity : AppCompatActivity() {
                         QRCodeLoginListener.State.CONFIRMED -> "已确认登录"
                         else -> null
                     }
-                    TODO("显示状态")
+                    // TODO 显示状态
+                    qrcodeInfo.text = message
                 }
             }
         }

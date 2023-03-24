@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ImageView
 import android.widget.Spinner
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -92,4 +94,8 @@ inline fun <reified T> AppCompatActivity.startActivityForResult(
     this.startActivityForResult(Intent(this, T::class.java).also {
         it.conf()
     }, requestId)
+}
+
+fun ImageView.setImage(data: ByteArray) {
+    setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
 }
