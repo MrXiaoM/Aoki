@@ -32,7 +32,8 @@
     <string name="login_confirm">是否登录</string>
     <string name="login_failed">"登录失败"</string>
     <string name="qrlogin_title">扫码登录</string>
-    <string name="qrlogin_description">请使用另一台 Android 设备在手机QQ上扫描二维码登录。或者你可以使用 QAuxiliary、QNotified 等 XPosed 模块移除相册扫码登录限制。</string>
+    <string name="qrlogin_description">请使用另一台设备在手机QQ上扫描二维码登录。或者你可以使用 QAuxiliary、QNotified 等 XPosed 模块移除相册扫码登录限制。</string>
+    <string name="qrlogin_info_"></string>
     <string name="login_slide_needed">"需要滑块验证"</string>
     <string name="slide_title">滑块验证</string>
     <string name="scan_title">其他验证方式</string>
