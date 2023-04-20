@@ -20,6 +20,7 @@ class EditDeviceInfoActivity : AppCompatActivity() {
         mHandler = Handler(mainLooper)
         binding = ActivityEditDeviceInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
@@ -47,7 +48,7 @@ class EditDeviceInfoActivity : AppCompatActivity() {
 
     class EditDeviceFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.edit_device, rootKey)
+            setPreferencesFromResource(R.xml.preference_edit_device, rootKey)
         }
 
         override fun onPreferenceClick(preference: Preference): Boolean {

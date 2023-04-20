@@ -17,6 +17,7 @@ class AboutActivity : AppCompatActivity() {
 
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         binding.textView.apply {
             text = Html.fromHtml(text(R.string.about_body), 0)
