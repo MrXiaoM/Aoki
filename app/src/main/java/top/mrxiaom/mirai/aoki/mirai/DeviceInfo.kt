@@ -34,8 +34,13 @@ object AokiDeviceInfo {
                         Build.FINGERPRINT.toByteArray(),
                         bootId,
                         kernelInfo.toByteArray(),
-                        baseBandVersion?.toByteArray() ?: baseBand,
-                        version,
+                        if (baseBandVersion.isNotEmpty()) baseBandVersion.toByteArray() else baseBand,
+                        DeviceInfo.Version(
+                            Build.VERSION.INCREMENTAL.toByteArray(),
+                            Build.VERSION.RELEASE.toByteArray(),
+                            Build.VERSION.CODENAME.toByteArray(),
+                            Build.VERSION.SDK_INT
+                        ),
                         simInfo,
                         osType,
                         macAddress,
@@ -51,12 +56,12 @@ object AokiDeviceInfo {
     }
 }
 
-val baseBandVersion: String?
+val baseBandVersion: String
     get() = runCatching {
         Class.forName("android.os.SystemProperties")
             .getMethod("get", String::class.java, String::class.java).invoke(
-                null, "gsm.version.baseband", null
+                null, "gsm.version.baseband", ""
             )?.toString()
-    }.getOrNull()
+    }.getOrNull() ?: ""
 
-val kernelInfo: String = android.system.Os.uname().release
+val kernelInfo: String = MiraiFile.create("/proc/version").readText()
