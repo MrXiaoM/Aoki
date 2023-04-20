@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.preference.PreferenceCategory
+            android:key="mainly"
+            android:title="主要信息">
+        <androidx.preference.EditTextPreference
+                app:key="name"
+                app:title="设备名"
+                app:useSimpleSummaryProvider="true"
+                app:dialogTitle="设备名"/>
+        <androidx.preference.EditTextPreference
+                app:key="version"
+                app:title="设备版本"
+                app:useSimpleSummaryProvider="true"
+                app:dialogTitle="设备版本"/>
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
+            android:key="other"
+            android:title="次要信息">
+        <androidx.preference.EditTextPreference
+                app:key="network"
+                app:title="网络类型"
+                app:useSimpleSummaryProvider="true"
+                app:dialogTitle="网络类型"/>
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

@@ -15,7 +15,8 @@
                 android:background="?attr/colorPrimary"
                 android:theme="?attr/actionBarTheme"
                 android:minHeight="?attr/actionBarSize" android:id="@+id/toolbar" app:title="@string/app_name"
-                app:menu="@menu/login_menu" android:foregroundTint="@color/teal_200"/>
+                app:menu="@menu/login_menu" android:foregroundTint="@color/teal_200" app:logo="@drawable/icon36"
+                app:titleMarginStart="24dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
@@ -29,7 +30,6 @@
                     android:id="@+id/qq"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="96dp"
                     android:hint="@string/prompt_qq"
                     android:inputType="number"
                     android:selectAllOnFocus="true"
@@ -106,10 +106,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="64dp"
                     android:text="@string/action_sign_in"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/accounts"

@@ -18,6 +18,7 @@
     <string name="prompt_qq">QQ号</string>
     <string name="prompt_password">密码</string>
     <string name="tips_not_complete">那个…你好像忘了输入什么东西</string>
+    <string name="tips_not_support_qrlogin">只有 手表 和 MacOS 协议支持扫码登录</string>
     <string name="action_accounts">账号管理</string>
     <string name="action_check_qrlogin">扫码登录</string>
     <string name="accounts_title">账号管理</string>
@@ -33,6 +34,11 @@
     <string name="login_failed">"登录失败"</string>
     <string name="qrlogin_title">扫码登录</string>
     <string name="qrlogin_description">请使用另一台设备在手机QQ上扫描二维码登录。或者你可以使用 QAuxiliary、QNotified 等 XPosed 模块移除相册扫码登录限制。</string>
+    <string name="qrlogin_state_WAITING_FOR_SCAN">等待扫描二维码中</string>
+    <string name="qrlogin_state_WAITING_FOR_CONFIRM">扫描完成，请在手机 QQ 确认登录</string>
+    <string name="qrlogin_state_CANCELLED">已取消登录，将会重新获取二维码</string>
+    <string name="qrlogin_state_TIMEOUT">扫描超时，将会重新获取二维码</string>
+    <string name="qrlogin_state_CONFIRMED">已确认登录</string>
     <string name="qrlogin_info_"></string>
     <string name="login_slide_needed">"需要滑块验证"</string>
     <string name="slide_title">滑块验证</string>
@@ -55,6 +61,11 @@
     <string name="captcha_sms_send_fail_title">验证码发送失败</string>
     <string name="captcha_sms_send_message">发送验证码成功, 请注意查收. 若未收到, 可在一分钟后重试</string>
     <string name="captcha_sms_send_retry">重试</string>
+    <string name="edit_device_action">编辑设备信息</string>
+    <string name="edit_device_title">编辑设备信息</string>
+    <string name="edit_device_nav_1">主要信息</string>
+    <string name="edit_device_nav_2">次要信息</string>
+
     <string name="protocol_ANDROID_PHONE">手机协议</string>
     <string name="protocol_ANDROID_PAD">平板协议</string>
     <string name="protocol_ANDROID_WATCH">手表协议</string>
@@ -63,4 +74,7 @@
     <string name="hb_strategy_STAB_HB">稳定策略(STAB)</string>
     <string name="hb_strategy_REGISTER">在线状态策略(REG)</string>
     <string name="hb_strategy_NONE">无策略(NONE)</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

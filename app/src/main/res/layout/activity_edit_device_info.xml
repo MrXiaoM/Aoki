@@ -7,20 +7,22 @@
         android:layout_height="match_parent">
     <LinearLayout
             android:orientation="vertical"
-            android:layout_width="11dp"
-            android:layout_height="4dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:theme="?attr/actionBarTheme"
-                android:minHeight="?attr/actionBarSize" android:id="@+id/toolbar" app:title="@string/edit_device_title"
+                android:minHeight="?attr/actionBarSize"
+                app:navigationIcon="@drawable/back"
+                android:id="@+id/toolbar" app:title="@string/edit_device_title"
                 android:foregroundTint="@color/teal_200"/>
         <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:name="top.mrxiaom.mirai.aoki.ui.EditDeviceInfoActivity$EditDeviceFragment"
-                tools:layout="@xml/edit_device"/>
+                tools:layout="@android:layout/preference_category"/>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
