@@ -3,12 +3,15 @@
     <img width="96" src="docs/images/logo.svg">
 
 ------
+[![Releases](https://img.shields.io/github/downloads/MrXiaoM/Aoki/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&logo=github)](https://github.com/MrXiaoM/Aoki/releases)
+[![Stars](https://img.shields.io/github/stars/MrXiaoM/Aoki?label=%E6%A0%87%E6%98%9F&logo=github)](https://github.com/MrXiaoM/Aoki/stargazers)
+![Android](https://img.shields.io/badge/%E5%AE%89%E5%8D%93-8-brightgreen?logo=android)
 
 Aoki 是在 Android 平台上基于 [mirai](https://github.com/mamoe/mirai) 开发的登录处理器
 
 本项目名称来源于
 
-i-style project 推出的[蒼姫ラピス (**Aoki** Lapis)](https://en.wikipedia.org/wiki/Aoki_Lapis)
+i-style project 推出的虚拟歌手[蒼姫ラピス (**Aoki** Lapis)](https://en.wikipedia.org/wiki/Aoki_Lapis)
 
 项目图标由[人间工作](https://www.pixiv.net/artworks/103427447)绘制
 
@@ -42,6 +45,12 @@ i-style project 推出的[蒼姫ラピス (**Aoki** Lapis)](https://en.wikipedia
 将从以上其中一种方法获得的 `bots` 文件夹中以qq号命名的文件夹，
 覆盖到 MCL 目录，然后你就可以在 MCL 中登录你的账户了。
 
+**建议在导出文件后，等待半小时左右再登录，以免因为短时间内两次登录的 IP 归属地变动较大被风控。**
+
 ## 下载
 
 在 [Github Releases](https://github.com/MrXiaoM/Aoki/releases) 下载最新版本
+
+## 捐助
+
+前往 [爱发电](https://afdian.net/a/mrxiaom) 捐助我。
