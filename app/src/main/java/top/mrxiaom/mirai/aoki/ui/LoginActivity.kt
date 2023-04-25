@@ -187,21 +187,20 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.qrloginRequest.observe(this) {
             it?.apply {
                 it.qrcode?.apply {
-                    // TODO 显示二维码
                     qrcodeImage.setImage(this)
                     if (!qrloginDialog.isShowing) qrloginDialog.show()
                 }
                 it.state?.apply {
                     val message = when (state) {
-                        QRCodeLoginListener.State.WAITING_FOR_SCAN -> "等待扫描二维码中"
-                        QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> "扫描完成，请在手机 QQ 确认登录"
-                        QRCodeLoginListener.State.CANCELLED -> "已取消登录，将会重新获取二维码"
-                        QRCodeLoginListener.State.TIMEOUT -> "扫描超时，将会重新获取二维码"
-                        QRCodeLoginListener.State.CONFIRMED -> "已确认登录"
+                        QRCodeLoginListener.State.WAITING_FOR_SCAN -> R.string.qrlogin_state_WAITING_FOR_SCAN
+                        QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> R.string.qrlogin_state_WAITING_FOR_CONFIRM
+                        QRCodeLoginListener.State.CANCELLED -> R.string.qrlogin_state_CANCELLED
+                        QRCodeLoginListener.State.TIMEOUT -> R.string.qrlogin_state_TIMEOUT
+                        QRCodeLoginListener.State.CONFIRMED -> R.string.qrlogin_state_CONFIRMED.also { qrloginDialog.dismiss() }
                         else -> null
                     }
-                    // TODO 显示状态
-                    qrcodeInfo.text = message
+                    if (message != null)
+                        qrcodeInfo.text = text(message)
                 }
             }
         }
