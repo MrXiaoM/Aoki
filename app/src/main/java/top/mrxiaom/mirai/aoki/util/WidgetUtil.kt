@@ -6,10 +6,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.Spinner
+import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -98,4 +101,15 @@ inline fun <reified T> AppCompatActivity.startActivityForResult(
 
 fun ImageView.setImage(data: ByteArray) {
     setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+}
+
+fun Context.layout(@LayoutRes resId: Int, root: ViewGroup? = null, block: (View.() -> Unit)? = null): View {
+    val view = LayoutInflater.from(this).inflate(resId, root)
+    if (block != null) view.block()
+    return view
+}
+fun Context.dialog(block: AlertDialog.Builder.() -> Unit): AlertDialog {
+    val builder = AlertDialog.Builder(this)
+    builder.block()
+    return builder.create()
 }
