@@ -17,6 +17,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 
 
 fun Activity.needPermission(requestId: Int, vararg permissions: String) {
@@ -28,7 +30,7 @@ fun Activity.needPermission(requestId: Int, vararg permissions: String) {
 
 fun AlertDialog.Builder.buttonPositive(
     @StringRes textId: Int,
-    onClick: DialogInterface.(Int) -> Unit
+    onClick: DialogInterface.(Int) -> Unit = {}
 ): AlertDialog.Builder =
     setPositiveButton(textId) { dialogInterface: DialogInterface, i: Int ->
         dialogInterface.onClick(i)
@@ -112,4 +114,8 @@ fun Context.dialog(block: AlertDialog.Builder.() -> Unit): AlertDialog {
     val builder = AlertDialog.Builder(this)
     builder.block()
     return builder.create()
+}
+
+fun <T> LifecycleOwner.observe(data: LiveData<T>, block: T.() -> Unit) {
+    data.observe(this) { it?.block() }
 }

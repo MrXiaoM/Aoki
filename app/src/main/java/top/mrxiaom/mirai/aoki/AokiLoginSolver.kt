@@ -146,12 +146,12 @@ object AokiLoginSolver : LoginSolver() {
     suspend fun LoginActivity.solveSms(
         bot: Bot,
         sms: DeviceVerificationRequests.SmsRequest
-    ): DeviceVerificationResult? {
+    ): DeviceVerificationResult {
         val def = CompletableDeferred<String?>().also { smsDefList[bot.id] = it }
         runInUIThread {
             loginViewModel._smsRequest.value = SmsRequest(bot, sms)
         }
-        return def.await()?.let { sms.solved(it) }
+        return def.await()?.let { sms.solved(it) } ?: throw UnsupportedOperationException("用户取消了登录")
     }
 
     /**

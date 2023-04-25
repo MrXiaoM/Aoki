@@ -143,70 +143,64 @@ class LoginActivity : AppCompatActivity() {
             HeartbeatStrategy.NONE
         ) { _, hbStrategy -> BotManager.defaultHbStrategy = hbStrategy }
         // 滑块验证请求
-        loginViewModel.slideRequest.observe(this) {
-            it?.apply {
-                startActivity<SlideActivity> {
-                    putExtra("qq", bot.id)
-                    putExtra("url", url)
-                    putExtra("ua", bot.configuration.protocol.userAgent)
-                }
+        observe(loginViewModel.slideRequest) {
+            startActivity<SlideActivity> {
+                putExtra("qq", bot.id)
+                putExtra("url", url)
+                putExtra("ua", bot.configuration.protocol.userAgent)
             }
         }
         // 扫码验证请求
-        loginViewModel.scanRequest.observe(this) {
-            it?.apply {
-                startActivityForResult<ScanActivity>(1) {
-                    putExtra("qq", bot.id)
-                    putExtra("url", url)
-                    putExtra("ua", bot.configuration.protocol.userAgent)
-                }
+        observe(loginViewModel.scanRequest) {
+            startActivityForResult<ScanActivity>(1) {
+                putExtra("qq", bot.id)
+                putExtra("url", url)
+                putExtra("ua", bot.configuration.protocol.userAgent)
             }
         }
         // 短信验证码请求
-        loginViewModel.smsRequest.observe(this@LoginActivity) {
-            it?.apply {
-                val def = AokiLoginSolver.smsDefList[bot.id] ?: return@observe
-                val phoneNumberFull = sms.run {
-                    if (countryCode != null && phoneNumber != null)
-                        text(R.string.captcha_sms_request_phoneNumber)
-                            .replace("\$countryCode", countryCode.toString())
-                            .replace("\$phoneNumber", phoneNumber.toString())
-                    else text(R.string.captcha_sms_request_phoneNumberNull)
-                }
-                AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_request_title)
-                    .setCancelable(false)
-                    .setMessage(R.string.captcha_sms_request_message) { text ->
-                        text.replace(
-                            "\$phoneNumberFull",
-                            phoneNumberFull
-                        )
-                    }
-                    .buttonPositive(R.string.captcha_sms_request_send) {
-                        smsSent(def, sms)
-                    }.buttonNegative(R.string.captcha_sms_request_other) {
-                        def.complete(null)
-                    }.show()
+        observe(loginViewModel.smsRequest) {
+            val def = AokiLoginSolver.smsDefList[bot.id] ?: return@observe
+            val phoneNumberFull = sms.run {
+                if (countryCode != null && phoneNumber != null)
+                    text(R.string.captcha_sms_request_phoneNumber)
+                        .replace("\$countryCode", countryCode.toString())
+                        .replace("\$phoneNumber", phoneNumber.toString())
+                else text(R.string.captcha_sms_request_phoneNumberNull)
             }
+            dialog {
+                setTitle(R.string.captcha_sms_request_title)
+                setCancelable(false)
+                setMessage(R.string.captcha_sms_request_message) { text ->
+                    text.replace(
+                        "\$phoneNumberFull",
+                        phoneNumberFull
+                    )
+                }
+                buttonPositive(R.string.captcha_sms_request_send) {
+                    smsSent(def, sms)
+                }
+                buttonNegative(R.string.captcha_sms_request_other) {
+                    def.complete(null)
+                }
+            }.show()
         }
         // 扫码登录
-        loginViewModel.qrloginRequest.observe(this) {
-            it?.apply {
-                it.qrcode?.apply {
-                    qrcodeImage.setImage(this)
-                    if (!qrloginDialog.isShowing) qrloginDialog.show()
+        observe(loginViewModel.qrloginRequest) {
+            qrcode?.apply {
+                qrcodeImage.setImage(this)
+                if (!qrloginDialog.isShowing) qrloginDialog.show()
+            }
+            state?.apply {
+                val message = when (this) {
+                    QRCodeLoginListener.State.WAITING_FOR_SCAN -> R.string.qrlogin_state_WAITING_FOR_SCAN
+                    QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> R.string.qrlogin_state_WAITING_FOR_CONFIRM
+                    QRCodeLoginListener.State.CANCELLED -> R.string.qrlogin_state_CANCELLED
+                    QRCodeLoginListener.State.TIMEOUT -> R.string.qrlogin_state_TIMEOUT
+                    QRCodeLoginListener.State.CONFIRMED -> R.string.qrlogin_state_CONFIRMED.also { qrloginDialog.dismiss() }
+                    else -> null
                 }
-                it.state?.apply {
-                    val message = when (state) {
-                        QRCodeLoginListener.State.WAITING_FOR_SCAN -> R.string.qrlogin_state_WAITING_FOR_SCAN
-                        QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> R.string.qrlogin_state_WAITING_FOR_CONFIRM
-                        QRCodeLoginListener.State.CANCELLED -> R.string.qrlogin_state_CANCELLED
-                        QRCodeLoginListener.State.TIMEOUT -> R.string.qrlogin_state_TIMEOUT
-                        QRCodeLoginListener.State.CONFIRMED -> R.string.qrlogin_state_CONFIRMED.also { qrloginDialog.dismiss() }
-                        else -> null
-                    }
-                    if (message != null)
-                        qrcodeInfo.text = text(message)
-                }
+                if (message != null) qrcodeInfo.text = text(message)
             }
         }
         // 接收登录结果
@@ -226,15 +220,15 @@ class LoginActivity : AppCompatActivity() {
             login.isClickable = true
             checkQRLogin.isClickable = true
         }
-        qq.setOnEditorActionListener { _, actionId, _ ->
-            if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login()
+        qq.setOnEditorActionListener { view, actionId, _ ->
+            if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login(view)
             false
         }
-        password.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) login()
+        password.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) login(view)
             false
         }
-        login.setOnClickListener { login() }
+        login.setOnClickListener(this::login)
         accounts.setOnClickListener(this::accountManage)
         supportActionBar?.setDisplayUseLogoEnabled(true)
     }
@@ -262,7 +256,7 @@ class LoginActivity : AppCompatActivity() {
                 """.trimIndent()
         }
     }
-    private fun login() {
+    private fun login(view: View) {
         if (checkQRLogin.isChecked && !BotManager.defaultProtocol.isSupportQRLogin) {
             Toast.makeText(this, R.string.tips_not_support_qrlogin, Toast.LENGTH_LONG).show()
             return
@@ -287,10 +281,10 @@ class LoginActivity : AppCompatActivity() {
             qq.text.toString().toLong(),
             password.text.toString()
         )
-        AlertDialog.Builder(this@LoginActivity)
-            .setTitle(R.string.login_confirm)
-            .setCancelable(false)
-            .buttonNeutral(R.string.edit_device_action) {
+        this@LoginActivity.dialog {
+            setTitle(R.string.login_confirm)
+            setCancelable(false)
+            buttonNeutral(R.string.edit_device_action) {
                 startActivity<EditDeviceInfoActivity> {
                     putExtra("qq", bot.id)
                 }
@@ -298,32 +292,32 @@ class LoginActivity : AppCompatActivity() {
                 login.isClickable = true
                 dismiss()
             }
-            .buttonPositive(R.string.ok) {
+            buttonPositive(R.string.ok) {
                 loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
                 dismiss()
             }
-            .buttonNegative(R.string.cancel) {
+            buttonNegative(R.string.cancel) {
                 loading.visibility = View.INVISIBLE
                 login.isClickable = true
                 dismiss()
             }
-            .show()
+        }.show()
     }
     /**
      * 账号管理
      */
-    private fun accountManage(view: View) {
-        val alert = AlertDialog.Builder(this)
-            .setTitle(R.string.accounts_title)
-            .buttonNegative(R.string.cancel)
+    private fun accountManage(view: View) = dialog {
+        setTitle(R.string.accounts_title)
+        buttonNegative(R.string.cancel)
         val accountList = File(externalRoot, "bots").listFiles()?.mapNotNull {
-            it.name.toLongOrNull()
-        }?.map { it.toString() }?.toTypedArray()
-        if (!accountList.isNullOrEmpty()) alert.setItems(accountList) { topDialog, i ->
+            it.name.toLongOrNull()?.toString()
+        }?.toTypedArray()
+        if (!accountList.isNullOrEmpty()) setItems(accountList) { topDialog, i ->
             val account = accountList[i]
             val folder = File(externalRoot, "bots/$account")
-            AlertDialog.Builder(this).setTitle(account)
-                .setItems(R.array.accounts_operation) { dialog, btn ->
+            context.dialog {
+                setTitle(account)
+                setItems(R.array.accounts_operation) { dialog, btn ->
                     when (btn) {
                         0 -> shareAccount(account)
                         1 -> folder.delFolder("device.json")
@@ -332,15 +326,14 @@ class LoginActivity : AppCompatActivity() {
                         3 -> deleteSession(File(folder, "cache"))
                         4 -> delFolder(folder)
                     }
-                    Toast.makeText(this, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                     topDialog.dismiss()
                 }
-                .buttonNegative(R.string.cancel)
-                .show()
+                buttonNegative(R.string.cancel)
+            }.show()
         }
-        alert.show()
-    }
+    }.show()
 
     /**
      * 删除 session 开头的文件
@@ -362,10 +355,11 @@ class LoginActivity : AppCompatActivity() {
             Drawable.createFromStream(URL(bot.avatarUrl).openStream(), "${bot.id}.png")
         }.getOrNull()
         // TODO 专门写一个登录成功后转跳到的主界面
-        AlertDialog.Builder(this).setTitle("登录成功")
-            .setCancelable(false)
-            .let { builder -> avatar?.let { builder.setIcon(it) } ?: builder }
-            .setMessage(
+        dialog {
+            setTitle("登录成功")
+            setCancelable(false)
+            let { builder -> avatar?.let { builder.setIcon(it) } ?: builder }
+            setMessage(
                 """
                 ${bot.id}: ${bot.nick}
                 群聊数量: ${bot.groups.size}
@@ -376,23 +370,24 @@ class LoginActivity : AppCompatActivity() {
                 点击 确定 退出登录
             """.trimIndent()
             )
-            .buttonPositive(R.string.ok) { bot.close() }
-            .buttonNegative(R.string.accounts_operation_export) {
+            buttonPositive(R.string.ok) { bot.close() }
+            buttonNegative(R.string.accounts_operation_export) {
                 val account = bot.id
                 bot.close()
                 shareAccount(account)
             }
-            .show()
+        }.show()
     }
 
     /**
      * 处理登录失败
      */
     private fun showLoginFailed(errorString: String) {
-        AlertDialog.Builder(this).setTitle(R.string.login_failed)
-            .setMessage(errorString)
-            .buttonPositive(R.string.ok) { }
-            .show()
+        dialog {
+            setTitle(R.string.login_failed)
+            setMessage(errorString)
+            buttonPositive(R.string.ok)
+        }.show()
     }
 
     /**
@@ -406,45 +401,53 @@ class LoginActivity : AppCompatActivity() {
                 try {
                     sms.requestSms()
                 } catch (t: Throwable) {
-                    AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_send_fail_title)
-                        .setCancelable(false)
-                        .setMessage(t.stackTraceToString())
-                        .buttonPositive(R.string.ok) { }
-                        .show()
+                    dialog {
+                        setTitle(R.string.captcha_sms_send_fail_title)
+                        setCancelable(false)
+                        setMessage(t.stackTraceToString())
+                        buttonPositive(R.string.ok)
+                    }.show()
                 }
             }
         }
+        dialog {
+            setTitle(R.string.captcha_sms_send_title)
+            setCancelable(false)
+            setMessage(R.string.captcha_sms_send_message)
 
-        val panel = LinearLayout(this@LoginActivity).apply {
-            orientation = LinearLayout.VERTICAL
-        }
-        val textCode = EditText(this@LoginActivity).also { panel.addView(it) }
-        val timer = Timer()
-        Button(this@LoginActivity).apply {
-            val retry = text(R.string.captcha_sms_send_retry)
-            text = retry
-            isClickable = false
-            setOnClickListener { requestSms() }
-            panel.addView(this)
+            val timer = Timer()
+            val textCode = EditText(context)
+            requestSms()
+            setView(LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(textCode)
+                Button(context).apply {
+                    val retry = text(R.string.captcha_sms_send_retry)
+                    text = retry
+                    isClickable = false
+                    setOnClickListener { requestSms() }
+                    addView(this)
 
-            // 更新剩余秒数
-            timer.schedule(object : TimerTask() {
-                override fun run() {
-                    val diff = (System.currentTimeMillis() - lastRequested).milliseconds
-                    isClickable = diff >= 1.minutes
-                    text = "$retry${if (isClickable) "" else " (${(1.minutes - diff).toInt(DurationUnit.SECONDS)})"}"
+                    // 更新剩余秒数
+                    timer.schedule(object : TimerTask() {
+                        override fun run() {
+                            val diff = (System.currentTimeMillis() - lastRequested).milliseconds
+                            isClickable = diff >= 1.minutes
+                            text =
+                                "$retry${if (isClickable) "" else " (${(1.minutes - diff).toInt(DurationUnit.SECONDS)})"}"
+                        }
+                    }, 1000L, 1000L)
                 }
-            }, 1000L, 1000L)
-        }
-        requestSms()
-        AlertDialog.Builder(this@LoginActivity).setTitle(R.string.captcha_sms_send_title)
-            .setCancelable(false)
-            .setMessage(R.string.captcha_sms_send_message)
-            .setView(panel)
-            .buttonPositive(R.string.ok) {
+            })
+            buttonPositive(R.string.ok) {
                 timer.cancel()
                 def.complete(textCode.text.toString())
-            }.show()
+            }
+            buttonNegative(R.string.cancel) {
+                timer.cancel()
+                def.complete(null)
+            }
+        }.show()
     }
 
     /**
