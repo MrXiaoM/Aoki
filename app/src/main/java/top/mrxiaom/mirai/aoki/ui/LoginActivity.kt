@@ -204,16 +204,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         // 接收登录结果
-        loginViewModel.loginResult.observe(this) {
-            val loginResult = it ?: return@observe
-
+        observe(loginViewModel.loginResult) {
             loading.visibility = View.GONE
             if (!checkQRLogin.isChecked) password.visibility = View.VISIBLE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error.analyze() + "\n" + loginResult.error.stackTraceToString())
+            if (error != null) {
+                showLoginFailed(error.analyze() + "\n" + error.stackTraceToString())
             }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+            if (success != null) {
+                updateUiWithUser(success)
             }
             qq.isClickable = true
             password.isClickable = true
