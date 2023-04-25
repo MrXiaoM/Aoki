@@ -117,6 +117,11 @@ class LoginActivity : AppCompatActivity() {
         updateFooter()
         checkQRLogin.setOnCheckedChangeListener { _, isChecked ->
             password.visibility = if (isChecked) View.INVISIBLE else View.VISIBLE
+            if (isChecked && !BotManager.defaultProtocol.isSupportQRLogin) {
+                binding.protocol.post {
+                    binding.protocol.setSelection(2)
+                }
+            }
         }
         setupDropdownBox(
             binding.protocol,
