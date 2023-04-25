@@ -209,13 +209,17 @@ class LoginActivity : AppCompatActivity() {
             val loginResult = it ?: return@observe
 
             loading.visibility = View.GONE
+            if (!checkQRLogin.isChecked) password.visibility = View.VISIBLE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error.analyze() + "\n" + loginResult.error.stackTraceToString())
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
             }
+            qq.isClickable = true
+            password.isClickable = true
             login.isClickable = true
+            checkQRLogin.isClickable = true
         }
         qq.setOnEditorActionListener { _, actionId, _ ->
             if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login()
@@ -254,13 +258,21 @@ class LoginActivity : AppCompatActivity() {
         }
     }
     private fun login() {
+        if (checkQRLogin.isChecked && !BotManager.defaultProtocol.isSupportQRLogin) {
+            Toast.makeText(this, R.string.tips_not_support_qrlogin, Toast.LENGTH_LONG).show()
+            return
+        }
         if (TextUtils.isEmpty(qq.text.toString()) || (!checkQRLogin.isChecked && TextUtils.isEmpty(password.text.toString()))) {
             Toast.makeText(this, R.string.tips_not_complete, Toast.LENGTH_SHORT).show()
             return
         }
 
         loading.visibility = View.VISIBLE
+        if (!checkQRLogin.isChecked) password.visibility = View.GONE
+        qq.isClickable = false
+        password.isClickable = false
         login.isClickable = false
+        checkQRLogin.isClickable = false
         val bot = if (checkQRLogin.isChecked) BotManager.newBotQRLogin(
             externalRoot,
             qq.text.toString().toLong()
