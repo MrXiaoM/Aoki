@@ -1,5 +1,6 @@
 package top.mrxiaom.mirai.aoki.mirai
 
+import android.annotation.SuppressLint
 import android.os.Build
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.utils.*
@@ -33,7 +34,7 @@ object AokiDeviceInfo {
                         Build.BOOTLOADER.toByteArray(),
                         Build.FINGERPRINT.toByteArray(),
                         bootId,
-                        kernelInfo.toByteArray(),
+                        kernelInfo?.toByteArray() ?: procVersion,
                         if (baseBandVersion.isNotEmpty()) baseBandVersion.toByteArray() else baseBand,
                         DeviceInfo.Version(
                             Build.VERSION.INCREMENTAL.toByteArray(),
@@ -57,6 +58,7 @@ object AokiDeviceInfo {
 }
 
 val baseBandVersion: String
+    @SuppressLint("PrivateApi")
     get() = runCatching {
         Class.forName("android.os.SystemProperties")
             .getMethod("get", String::class.java, String::class.java).invoke(
@@ -64,4 +66,4 @@ val baseBandVersion: String
             )?.toString()
     }.getOrNull() ?: ""
 
-val kernelInfo: String = MiraiFile.create("/proc/version").readText()
+val kernelInfo: String? = runCatching { MiraiFile.create("/proc/version").readText() }.getOrNull()
