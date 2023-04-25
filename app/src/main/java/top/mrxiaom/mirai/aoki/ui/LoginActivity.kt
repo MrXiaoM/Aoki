@@ -82,27 +82,25 @@ class LoginActivity : AppCompatActivity() {
             1,
             Manifest.permission.INTERNET
         )
-        qrloginDialog = AlertDialog.Builder(this)
-            .setTitle(R.string.qrlogin_title)
-            .setView(LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                addView(TextView(this@LoginActivity).apply {
-                    text(R.string.qrlogin_description)
-                })
-                addView(ImageView(this@LoginActivity).apply {
 
-                    qrcodeImage = this
-                })
-                addView(TextView(this@LoginActivity).apply {
-
-                    qrcodeInfo = this
-                })
+        qrloginDialog = dialog {
+            setTitle(R.string.qrlogin_title)
+            setCancelable(false)
+            setView(layout(R.layout.dialog_qrlogin) {
+                qrcodeImage = findViewById<ImageView>(R.id.dialog_qrlogin_image).apply {
+                    setOnLongClickListener {
+                        // TODO: 保存二维码图片到本地
+                        Toast.makeText(this@LoginActivity, R.string.qrlogin_saved, Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                }
+                qrcodeInfo = findViewById(R.id.dialog_qrlogin_info)
             })
-            .buttonNegative(R.string.cancel) {
+            buttonNegative(R.string.cancel) {
                 // TODO 取消登录
                 dismiss()
             }
-            .create()
+        }
 
         this.qq = binding.qq
         this.password = binding.password

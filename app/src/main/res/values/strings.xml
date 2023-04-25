@@ -33,13 +33,13 @@
     <string name="login_confirm">是否登录</string>
     <string name="login_failed">"登录失败"</string>
     <string name="qrlogin_title">扫码登录</string>
-    <string name="qrlogin_description">请使用另一台设备在手机QQ上扫描二维码登录。或者你可以使用 QAuxiliary、QNotified 等 XPosed 模块移除相册扫码登录限制。</string>
+    <string name="qrlogin_description">请使用另一台设备在手机QQ上扫描二维码登录。或者你可以使用 QAuxiliary、QNotified 等 XPosed 模块移除相册扫码登录限制。长按二维码可保存至系统相册。</string>
     <string name="qrlogin_state_WAITING_FOR_SCAN">等待扫描二维码中</string>
     <string name="qrlogin_state_WAITING_FOR_CONFIRM">扫描完成，请在手机 QQ 确认登录</string>
     <string name="qrlogin_state_CANCELLED">已取消登录，将会重新获取二维码</string>
     <string name="qrlogin_state_TIMEOUT">扫描超时，将会重新获取二维码</string>
     <string name="qrlogin_state_CONFIRMED">已确认登录</string>
-    <string name="qrlogin_info_"></string>
+    <string name="qrlogin_saved">二维码图片已保存到系统相册</string>
     <string name="login_slide_needed">"需要滑块验证"</string>
     <string name="slide_title">滑块验证</string>
     <string name="scan_title">其他验证方式</string>

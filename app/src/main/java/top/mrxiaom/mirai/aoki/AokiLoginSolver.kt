@@ -158,9 +158,6 @@ object AokiLoginSolver : LoginSolver() {
      * 二维码登录
      */
     override fun createQRCodeLoginListener(bot: Bot): QRCodeLoginListener = object : QRCodeLoginListener {
-        override val qrCodeMargin: Int get() = 5
-        override val qrCodeSize: Int get() = 2
-
         override fun onFetchQRCode(bot: Bot, data: ByteArray) {
             loginActivity?.runInUIThread {
                 loginViewModel._qrloginRequest.value = QRLoginRequest(bot, data, null)
