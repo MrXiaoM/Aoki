@@ -20,6 +20,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.auth.QRCodeLoginListener
+import net.mamoe.mirai.network.CustomLoginFailedException
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
@@ -97,7 +98,9 @@ class LoginActivity : AppCompatActivity() {
                 qrcodeInfo = findViewById(R.id.dialog_qrlogin_info)
             })
             buttonNegative(R.string.cancel) {
-                // TODO 取消登录
+                qrcodeImage.contentDescription.toString().toLongOrNull()?.also {
+                    Bot.getInstanceOrNull(it)?.close(object: CustomLoginFailedException(true, "用户主动取消登录") { })
+                }
                 dismiss()
             }
         }
@@ -189,6 +192,7 @@ class LoginActivity : AppCompatActivity() {
         observe(loginViewModel.qrloginRequest) {
             qrcode?.apply {
                 qrcodeImage.setImage(this)
+                qrcodeImage.contentDescription = bot.id.toString()
                 if (!qrloginDialog.isShowing) qrloginDialog.show()
             }
             state?.apply {
