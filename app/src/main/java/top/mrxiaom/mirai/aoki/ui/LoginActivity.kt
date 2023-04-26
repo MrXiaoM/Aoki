@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -28,6 +29,8 @@ import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
+import top.mrxiaom.mirai.aoki.mirai.baseBandVersion
+import top.mrxiaom.mirai.aoki.mirai.kernelInfo
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.util.*
 import java.io.File
@@ -51,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var accounts: Button
     private lateinit var loading: ProgressBar
     private lateinit var qrcodeImage: ImageView
+    var qrcodeImageRaw: ByteArray? = null
     private lateinit var qrcodeInfo: TextView
     private lateinit var qrloginDialog: AlertDialog
     fun runInUIThread(action: LoginActivity.() -> Unit) {
@@ -90,8 +94,13 @@ class LoginActivity : AppCompatActivity() {
             setView(layout(R.layout.dialog_qrlogin) {
                 qrcodeImage = findViewById<ImageView>(R.id.dialog_qrlogin_image).apply {
                     setOnLongClickListener {
-                        // TODO: 保存二维码图片到本地
-                        Toast.makeText(this@LoginActivity, R.string.qrlogin_saved, Toast.LENGTH_SHORT).show()
+                        val image = qrcodeImageRaw ?: return@setOnLongClickListener true.also {
+                            Toast.makeText(this@LoginActivity, R.string.qrlogin_save_failed, Toast.LENGTH_SHORT).show()
+                        }
+                        requireExternalPermission {
+                            saveQRCode(contentDescription.toString(), image)
+                            Toast.makeText(this@LoginActivity, R.string.qrlogin_saved, Toast.LENGTH_SHORT).show()
+                        }
                         true
                     }
                 }
@@ -191,6 +200,7 @@ class LoginActivity : AppCompatActivity() {
         // 扫码登录
         observe(loginViewModel.qrloginRequest) {
             qrcode?.apply {
+                qrcodeImageRaw = this
                 qrcodeImage.setImage(this)
                 qrcodeImage.contentDescription = bot.id.toString()
                 if (!qrloginDialog.isShowing) qrloginDialog.show()

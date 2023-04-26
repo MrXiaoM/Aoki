@@ -40,6 +40,7 @@
     <string name="qrlogin_state_TIMEOUT">扫描超时，将会重新获取二维码</string>
     <string name="qrlogin_state_CONFIRMED">已确认登录</string>
     <string name="qrlogin_saved">二维码图片已保存到系统相册</string>
+    <string name="qrlogin_save_failed">找不到二维码图片缓存</string>
     <string name="login_slide_needed">"需要滑块验证"</string>
     <string name="slide_title">滑块验证</string>
     <string name="scan_title">其他验证方式</string>
