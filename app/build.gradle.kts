@@ -9,7 +9,7 @@ val miraiVersion = "2.15.0-M1"
 
 android {
     namespace = "top.mrxiaom.mirai.aoki"
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "top.mrxiaom.mirai.aoki"
