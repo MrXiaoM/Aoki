@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "top.mrxiaom.mirai.aoki"
         minSdk = 26
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 6
         versionName = "1.2.0"
 
@@ -38,11 +38,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.annotation:annotation:1.3.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("androidx.annotation:annotation:1.6.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
@@ -55,5 +55,5 @@ dependencies {
     implementation("net.mamoe:mirai-core:$miraiVersion")
     implementation("net.mamoe:mirai-core-utils:$miraiVersion")
 
-    implementation("org.bouncycastle:bcprov-jdk15on:1.56")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.67")
 }
