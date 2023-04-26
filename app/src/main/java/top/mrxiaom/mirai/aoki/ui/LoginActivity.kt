@@ -296,6 +296,8 @@ class LoginActivity : AppCompatActivity() {
         this@LoginActivity.dialog {
             setTitle(R.string.login_confirm)
             setCancelable(false)
+            // TODO 编辑设备信息功能正在编写
+            /*
             buttonNeutral(R.string.edit_device_action) {
                 startActivity<EditDeviceInfoActivity> {
                     putExtra("qq", bot.id)
@@ -304,6 +306,7 @@ class LoginActivity : AppCompatActivity() {
                 login.isClickable = true
                 dismiss()
             }
+            */
             buttonPositive(R.string.ok) {
                 loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
                 dismiss()
@@ -311,6 +314,7 @@ class LoginActivity : AppCompatActivity() {
             buttonNegative(R.string.cancel) {
                 loading.visibility = View.INVISIBLE
                 login.isClickable = true
+                loginViewModel.cancelLogin(bot)
                 dismiss()
             }
         }.show()

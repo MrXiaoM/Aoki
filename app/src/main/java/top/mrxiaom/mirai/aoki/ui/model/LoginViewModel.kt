@@ -51,4 +51,8 @@ class LoginViewModel : ViewModel() {
             _loginResult.value = LoginResult(error = t)
         }
     }
+    fun cancelLogin(bot: Bot) {
+        _loginResult.value = LoginResult(error = InterruptedException("用户取消了登录操作"))
+        bot.close()
+    }
 }
