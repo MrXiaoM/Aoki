@@ -10,8 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -83,22 +85,36 @@ fun Spinner.onItemSelected(selected: (Int) -> Unit) {
     }
 }
 
-inline fun <reified T> AppCompatActivity.startActivity(
+inline fun <reified T> Activity.startActivity(
     conf: Intent.() -> Unit = {}
-) where T : AppCompatActivity {
+) where T : Activity {
     this.startActivity(Intent(this, T::class.java).also {
         it.conf()
     })
 }
 
 @Suppress("DEPRECATION")
-inline fun <reified T> AppCompatActivity.startActivityForResult(
+inline fun <reified T> Activity.startActivityForResult(
     requestId: Int,
     conf: Intent.() -> Unit = {}
-) where T : AppCompatActivity {
+) where T : Activity {
     this.startActivityForResult(Intent(this, T::class.java).also {
         it.conf()
     }, requestId)
+}
+fun <T> Context.setupDropdownBox(
+    dropdownBox: Spinner,
+    @IdRes array: Int,
+    vararg values: T,
+    onSelected: (i: Int, value: T) -> Unit
+) {
+    dropdownBox.adapter =
+        ArrayAdapter.createFromResource(this, array, android.R.layout.simple_spinner_item)
+            .also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+    dropdownBox.onItemSelected {
+        if (it < 0) return@onItemSelected
+        onSelected(it, values[it])
+    }
 }
 
 fun ImageView.setImage(data: ByteArray) {

@@ -5,14 +5,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.auth.QRCodeLoginListener
 import net.mamoe.mirai.network.CustomLoginFailedException
 import top.mrxiaom.mirai.aoki.R
+import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.ui.model.QRLoginRequest
 import top.mrxiaom.mirai.aoki.util.*
 
-class QRLoginDialog(val activity: Activity) {
+class QRLoginDialog(
+    val activity: AppCompatActivity,
+    loginViewModel: LoginViewModel
+) {
+    init {
+        activity.observe(loginViewModel.qrloginRequest) { pushInfo(this) }
+    }
     private lateinit var image: ImageView
     private lateinit var info: TextView
     var imageRaw: ByteArray? = null

@@ -25,6 +25,7 @@ import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
+import top.mrxiaom.mirai.aoki.ui.dialog.LoginSolverDialog
 import top.mrxiaom.mirai.aoki.ui.dialog.QRLoginDialog
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.util.*
@@ -42,12 +43,15 @@ class LoginActivity : AppCompatActivity() {
     internal val loginViewModel = LoginViewModel()
     private lateinit var binding: ActivityLoginBinding
     private lateinit var externalRoot: File
+
     private lateinit var qq: EditText
     private lateinit var password: EditText
     private lateinit var login: Button
     private lateinit var checkQRLogin: CheckBox
     private lateinit var accounts: Button
     private lateinit var loading: ProgressBar
+
+    private lateinit var loginSolverDialog: LoginSolverDialog
     private lateinit var qrloginDialog: QRLoginDialog
     fun runInUIThread(action: LoginActivity.() -> Unit) {
         mHandler.post { action() }
@@ -79,7 +83,8 @@ class LoginActivity : AppCompatActivity() {
             1,
             Manifest.permission.INTERNET
         )
-        qrloginDialog = QRLoginDialog(this)
+        loginSolverDialog = LoginSolverDialog(this, loginViewModel)
+        qrloginDialog = QRLoginDialog(this, loginViewModel)
 
         this.qq = binding.qq
         this.password = binding.password
@@ -121,53 +126,6 @@ class LoginActivity : AppCompatActivity() {
             HeartbeatStrategy.REGISTER,
             HeartbeatStrategy.NONE
         ) { _, hbStrategy -> BotManager.defaultHbStrategy = hbStrategy }
-        // 滑块验证请求
-        observe(loginViewModel.slideRequest) {
-            startActivity<SlideActivity> {
-                putExtra("qq", bot.id)
-                putExtra("url", url)
-                putExtra("ua", bot.configuration.protocol.userAgent)
-            }
-        }
-        // 扫码验证请求
-        observe(loginViewModel.scanRequest) {
-            startActivityForResult<ScanActivity>(1) {
-                putExtra("qq", bot.id)
-                putExtra("url", url)
-                putExtra("ua", bot.configuration.protocol.userAgent)
-            }
-        }
-        // 短信验证码请求
-        observe(loginViewModel.smsRequest) {
-            val def = AokiLoginSolver.smsDefList[bot.id] ?: return@observe
-            val phoneNumberFull = sms.run {
-                if (countryCode != null && phoneNumber != null)
-                    text(R.string.captcha_sms_request_phoneNumber)
-                        .replace("\$countryCode", countryCode.toString())
-                        .replace("\$phoneNumber", phoneNumber.toString())
-                else text(R.string.captcha_sms_request_phoneNumberNull)
-            }
-            dialog {
-                setTitle(R.string.captcha_sms_request_title)
-                setCancelable(false)
-                setMessage(R.string.captcha_sms_request_message) { text ->
-                    text.replace(
-                        "\$phoneNumberFull",
-                        phoneNumberFull
-                    )
-                }
-                buttonPositive(R.string.captcha_sms_request_send) {
-                    smsSent(def, sms)
-                }
-                buttonNegative(R.string.captcha_sms_request_other) {
-                    def.complete(null)
-                }
-            }.show()
-        }
-        // 扫码登录
-        observe(loginViewModel.qrloginRequest) {
-            qrloginDialog.pushInfo(this)
-        }
         // 接收登录结果
         observe(loginViewModel.loginResult) {
             loading.visibility = View.GONE
@@ -195,20 +153,7 @@ class LoginActivity : AppCompatActivity() {
         accounts.setOnClickListener(this::accountManage)
         supportActionBar?.setDisplayUseLogoEnabled(true)
     }
-    private fun <T> setupDropdownBox(
-        dropdownBox: Spinner,
-        @IdRes array: Int,
-        vararg values: T,
-        onSelected: (i: Int, value: T) -> Unit
-    ) {
-        dropdownBox.adapter =
-            ArrayAdapter.createFromResource(this, array, android.R.layout.simple_spinner_item)
-                .also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        dropdownBox.onItemSelected {
-            if (it < 0) return@onItemSelected
-            onSelected(it, values[it])
-        }
-    }
+
     private fun updateFooter() {
         binding.infomation.apply {
             val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
@@ -358,66 +303,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /**
-     * 处理发送短信验证码
-     */
-    private fun smsSent(def: CompletableDeferred<String?>, sms: DeviceVerificationRequests.SmsRequest) {
-        var lastRequested = 0L
-        fun requestSms() {
-            lastRequested = System.currentTimeMillis()
-            loginViewModel.viewModelScope.launch {
-                try {
-                    sms.requestSms()
-                } catch (t: Throwable) {
-                    dialog {
-                        setTitle(R.string.captcha_sms_send_fail_title)
-                        setCancelable(false)
-                        setMessage(t.stackTraceToString())
-                        buttonPositive(R.string.ok)
-                    }.show()
-                }
-            }
-        }
-        dialog {
-            setTitle(R.string.captcha_sms_send_title)
-            setCancelable(false)
-            setMessage(R.string.captcha_sms_send_message)
-
-            val timer = Timer()
-            val textCode = EditText(context)
-            requestSms()
-            setView(LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                addView(textCode)
-                Button(context).apply {
-                    val retry = text(R.string.captcha_sms_send_retry)
-                    text = retry
-                    isClickable = false
-                    setOnClickListener { requestSms() }
-                    addView(this)
-
-                    // 更新剩余秒数
-                    timer.schedule(object : TimerTask() {
-                        override fun run() {
-                            val diff = (System.currentTimeMillis() - lastRequested).milliseconds
-                            isClickable = diff >= 1.minutes
-                            text =
-                                "$retry${if (isClickable) "" else " (${(1.minutes - diff).toInt(DurationUnit.SECONDS)})"}"
-                        }
-                    }, 1000L, 1000L)
-                }
-            })
-            buttonPositive(R.string.ok) {
-                timer.cancel()
-                def.complete(textCode.text.toString())
-            }
-            buttonNegative(R.string.cancel) {
-                timer.cancel()
-                def.complete(null)
-            }
-        }.show()
-    }
-
-    /**
      * 导出账户并分享
      */
     private fun shareAccount(account: Any) {
@@ -464,7 +349,7 @@ class LoginActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 1 && resultCode == RESULT_OK) {
-            AokiLoginSolver.scanDefList[data.getLongExtra("qq", 0)]?.complete(1)
+            loginSolverDialog.onScanResult(data)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
