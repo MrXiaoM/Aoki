@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -13,15 +12,12 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.auth.QRCodeLoginListener
-import net.mamoe.mirai.network.CustomLoginFailedException
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
@@ -29,8 +25,7 @@ import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
-import top.mrxiaom.mirai.aoki.mirai.baseBandVersion
-import top.mrxiaom.mirai.aoki.mirai.kernelInfo
+import top.mrxiaom.mirai.aoki.ui.dialog.QRLoginDialog
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.util.*
 import java.io.File
@@ -53,10 +48,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var checkQRLogin: CheckBox
     private lateinit var accounts: Button
     private lateinit var loading: ProgressBar
-    private lateinit var qrcodeImage: ImageView
-    var qrcodeImageRaw: ByteArray? = null
-    private lateinit var qrcodeInfo: TextView
-    private lateinit var qrloginDialog: AlertDialog
+    private lateinit var qrloginDialog: QRLoginDialog
     fun runInUIThread(action: LoginActivity.() -> Unit) {
         mHandler.post { action() }
     }
@@ -87,32 +79,7 @@ class LoginActivity : AppCompatActivity() {
             1,
             Manifest.permission.INTERNET
         )
-
-        qrloginDialog = dialog {
-            setTitle(R.string.qrlogin_title)
-            setCancelable(false)
-            setView(layout(R.layout.dialog_qrlogin) {
-                qrcodeImage = findViewById<ImageView>(R.id.dialog_qrlogin_image).apply {
-                    setOnLongClickListener {
-                        val image = qrcodeImageRaw ?: return@setOnLongClickListener true.also {
-                            Toast.makeText(this@LoginActivity, R.string.qrlogin_save_failed, Toast.LENGTH_SHORT).show()
-                        }
-                        requireExternalPermission {
-                            saveQRCode(contentDescription.toString(), image)
-                            Toast.makeText(this@LoginActivity, R.string.qrlogin_saved, Toast.LENGTH_SHORT).show()
-                        }
-                        true
-                    }
-                }
-                qrcodeInfo = findViewById(R.id.dialog_qrlogin_info)
-            })
-            buttonNegative(R.string.cancel) {
-                qrcodeImage.contentDescription.toString().toLongOrNull()?.also {
-                    Bot.getInstanceOrNull(it)?.close(object: CustomLoginFailedException(true, "用户主动取消登录") { })
-                }
-                dismiss()
-            }
-        }
+        qrloginDialog = QRLoginDialog(this)
 
         this.qq = binding.qq
         this.password = binding.password
@@ -199,23 +166,7 @@ class LoginActivity : AppCompatActivity() {
         }
         // 扫码登录
         observe(loginViewModel.qrloginRequest) {
-            qrcode?.apply {
-                qrcodeImageRaw = this
-                qrcodeImage.setImage(this)
-                qrcodeImage.contentDescription = bot.id.toString()
-                if (!qrloginDialog.isShowing) qrloginDialog.show()
-            }
-            state?.apply {
-                val message = when (this) {
-                    QRCodeLoginListener.State.WAITING_FOR_SCAN -> R.string.qrlogin_state_WAITING_FOR_SCAN
-                    QRCodeLoginListener.State.WAITING_FOR_CONFIRM -> R.string.qrlogin_state_WAITING_FOR_CONFIRM
-                    QRCodeLoginListener.State.CANCELLED -> R.string.qrlogin_state_CANCELLED
-                    QRCodeLoginListener.State.TIMEOUT -> R.string.qrlogin_state_TIMEOUT
-                    QRCodeLoginListener.State.CONFIRMED -> R.string.qrlogin_state_CONFIRMED.also { qrloginDialog.dismiss() }
-                    else -> null
-                }
-                if (message != null) qrcodeInfo.text = text(message)
-            }
+            qrloginDialog.pushInfo(this)
         }
         // 接收登录结果
         observe(loginViewModel.loginResult) {
