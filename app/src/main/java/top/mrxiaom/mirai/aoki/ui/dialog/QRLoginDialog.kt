@@ -16,7 +16,7 @@ import top.mrxiaom.mirai.aoki.util.*
 
 class QRLoginDialog(
     val activity: AppCompatActivity,
-    loginViewModel: LoginViewModel
+    val loginViewModel: LoginViewModel
 ) {
     init {
         activity.observe(loginViewModel.qrloginRequest) { pushInfo(this) }
@@ -44,7 +44,8 @@ class QRLoginDialog(
         })
         buttonNegative(R.string.cancel) {
             image.contentDescription.toString().toLongOrNull()?.also {
-                Bot.getInstanceOrNull(it)?.close(object: CustomLoginFailedException(true, "用户主动取消登录") { })
+                val bot = Bot.getInstanceOrNull(it) ?: return@also
+                loginViewModel.cancelLogin(bot)
             }
             dismiss()
         }

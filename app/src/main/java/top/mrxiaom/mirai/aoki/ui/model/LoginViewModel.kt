@@ -3,6 +3,8 @@ package top.mrxiaom.mirai.aoki.ui.model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.auth.QRCodeLoginListener
 import net.mamoe.mirai.utils.DeviceVerificationRequests
@@ -43,7 +45,7 @@ class LoginViewModel : ViewModel() {
     val scanRequest: LiveData<ScanRequest> = _scanRequest
     internal val _qrloginRequest = MutableLiveData<QRLoginRequest>()
     val qrloginRequest: LiveData<QRLoginRequest> = _qrloginRequest
-    suspend fun login(bot: Bot) {
+    fun login(bot: Bot) = viewModelScope.launch {
         try {
             bot.login()
             _loginResult.value = LoginResult(success = bot)
@@ -52,7 +54,8 @@ class LoginViewModel : ViewModel() {
         }
     }
     fun cancelLogin(bot: Bot) {
-        _loginResult.value = LoginResult(error = InterruptedException("用户取消了登录操作"))
+        _loginResult.value = LoginResult(error = UserCancelledLoginException())
         bot.close()
     }
 }
+class UserCancelledLoginException : InterruptedException()

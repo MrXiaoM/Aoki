@@ -204,12 +204,10 @@ class LoginActivity : AppCompatActivity() {
             }
             */
             buttonPositive(R.string.ok) {
-                loginViewModel.viewModelScope.launch { loginViewModel.login(bot) }
+                loginViewModel.login(bot)
                 dismiss()
             }
             buttonNegative(R.string.cancel) {
-                loading.visibility = View.INVISIBLE
-                login.isClickable = true
                 loginViewModel.cancelLogin(bot)
                 dismiss()
             }

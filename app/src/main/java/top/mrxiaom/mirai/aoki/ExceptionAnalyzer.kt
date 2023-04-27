@@ -1,9 +1,13 @@
 package top.mrxiaom.mirai.aoki
 
+import top.mrxiaom.mirai.aoki.ui.model.UserCancelledLoginException
+
 object ExceptionAnalyzer {
     fun Throwable.analyze(): String {
         val msg = message ?: ""
-        return when {
+        var stacktrace = true
+        val analyze = when {
+            this is UserCancelledLoginException -> "用户主动取消了登录操作".also { stacktrace = false }
             msg.contains("code=235") -> """
                 出现了 235 错误，你的账号可能已被风控，请尝试以下方法解决:
                 * 先使用官方QQ客户端登录机器人账号
@@ -44,11 +48,12 @@ object ExceptionAnalyzer {
                 请尝试到「账号管理」删除登录会话
                 """.trimIndent()
             else -> null
-        }?.run { """
-            $this
+        }?.run { if (stacktrace) this +
+        """
             ==============================
             以下为原始异常信息，非开发者无需阅读
             ==============================
-            """.trimIndent() } ?: ""
+        """.trimIndent() else this } ?: ""
+        return analyze + if (analyze.isEmpty() || stacktrace) stackTraceToString() else ""
     }
 }
