@@ -270,16 +270,19 @@ class LoginActivity : AppCompatActivity() {
         dialog {
             setTitle("登录成功")
             setCancelable(false)
-            let { builder -> avatar?.let { builder.setIcon(it) } ?: builder }
+            avatar?.let { setIcon(it) }
             setMessage(
                 """
+                请务必在导出文件后，等待半小时左右再登录，以免因为短时间内两次登录的 IP 归属地变动较大被风控。
+                
                 ${bot.id}: ${bot.nick}
                 群聊数量: ${bot.groups.size}
                 分组数量: ${bot.friendGroups.asCollection().size}
                 好友数量: ${bot.friends.size}
                 
-                请到 Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai/bots 复制设备信息
-                点击 确定 退出登录
+                请到 Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai/bots 复制设备信息。
+                或者使用以下的按钮导出设备信息。
+                点击 下方任意按钮 退出登录
             """.trimIndent()
             )
             buttonPositive(R.string.ok) { bot.close() }
