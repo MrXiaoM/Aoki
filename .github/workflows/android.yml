@@ -32,4 +32,4 @@ jobs:
         with:
           artifacts: "*.apk"
           token: ${{ github.token }}
-          generateReleaseNotes: true
+          bodyFile: "release-note.md"
