@@ -1,15 +1,13 @@
-# Aoki 1.2.0
+# Aoki 1.2.1-pre1
+> 此版本为测试版
 
 ## 新增
-* 自 1.2.0 起，每次发布版本将会附带 Release Note。
-* 扫码登录基本支持。
-* 勾选扫码登录时若选择的协议不支持扫码，自动选择手表协议。
-* 不同的协议在进行滑块验证时在浏览器使用不同的 UA
+* 信息密度更高的登录失败对话框。
+* 添加 cssxsh/fix-protocol-version 1.5.0
 
 ## 修复或变更
-* 升级 mirai 版本到 `2.15.0-M1`。
-* 更改 UI 布局，将无用的空隙删除。
-* 优化代码结构。
+* 优化 ProducerFailureException 的查看体验。
+* 将 mirai 版本升级到开发版 [2.15.0-dev-83](https://github.com/mamoe/mirai/actions/runs/4865587143)
 
 ## 预告
 * 可在 Aoki 中可视化编辑 device.json，以及生成文件不登录。

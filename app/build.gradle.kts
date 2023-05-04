@@ -15,8 +15,8 @@ android {
         applicationId = "top.mrxiaom.mirai.aoki"
         minSdk = 26
         targetSdk = 33
-        versionCode = 6
-        versionName = "1.2.0"
+        versionCode = 7
+        versionName = "1.2.1-pre1"
 
         buildConfigField("String", "miraiVersion", "\"$miraiVersion\"")
     }
