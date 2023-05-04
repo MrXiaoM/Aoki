@@ -278,6 +278,8 @@ class LoginActivity : AppCompatActivity() {
                 分组数量: ${bot.friendGroups.asCollection().size}
                 好友数量: ${bot.friends.size}
                 
+                推荐同时在将要登录该账号的 mirai 中安装 fix-protocol-version，详见论坛官方公告。
+                
                 请到 Android/data/top.mrxiaom.mirai.aoki/files/AokiMirai/bots 复制设备信息。
                 或者使用以下的按钮导出设备信息。
                 点击 下方任意按钮 退出登录
