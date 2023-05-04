@@ -1,9 +1,11 @@
 package top.mrxiaom.mirai.aoki.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -18,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.auth.BotAuthorization
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
 import net.mamoe.mirai.utils.DeviceVerificationRequests
@@ -29,6 +32,7 @@ import top.mrxiaom.mirai.aoki.ui.dialog.LoginSolverDialog
 import top.mrxiaom.mirai.aoki.ui.dialog.QRLoginDialog
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.util.*
+import xyz.cssxsh.mirai.tool.FixProtocolVersion
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -130,11 +134,12 @@ class LoginActivity : AppCompatActivity() {
         observe(loginViewModel.loginResult) {
             loading.visibility = View.GONE
             if (!checkQRLogin.isChecked) password.visibility = View.VISIBLE
-            if (error != null) {
-                showLoginFailed(error.analyze() + "\n" + error.stackTraceToString())
+            if (success) {
+                updateUiWithUser(bot)
             }
-            if (success != null) {
-                updateUiWithUser(success)
+            else {
+                val message = error?.run { error.analyze() + "\n" + error.stackTraceToString() } ?: "Login failed with no message."
+                showLoginFailed(bot, message)
             }
             qq.isClickable = true
             password.isClickable = true
@@ -297,10 +302,29 @@ class LoginActivity : AppCompatActivity() {
     /**
      * 处理登录失败
      */
-    private fun showLoginFailed(errorString: String) {
+    @SuppressLint("SetTextI18n")
+    private fun showLoginFailed(bot: Bot, errorString: String) {
         dialog {
             setTitle(R.string.login_failed)
-            setMessage(errorString)
+            setView(layout(R.layout.dialog_login_failed) {
+                val info = findViewById<TextView>(R.id.dialog_login_failed_info)
+                val log = findViewById<TextView>(R.id.dialog_login_failed_log)
+                val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
+                val loginType = BotManager.getLoginType(bot.id)
+                info.text = """
+                    Aoki $version Login Failed! (by $loginType)
+                    Android ${Build.VERSION.RELEASE} 
+                    Powered by Mirai ${BuildConstants.miraiVersion}
+                    Protocol: ${bot.configuration.protocol}, hbStrategy: ${bot.configuration.heartbeatStrategy}
+                """.trimIndent()
+                val protocolVersions = FixProtocolVersion.info().map { "${it.key}: ${it.value}" }.joinToString("\n")
+                log.text = """
+                    报错日志:
+                    $errorString
+                    协议信息:
+                    $protocolVersions
+                """.trimIndent()
+            })
             buttonPositive(R.string.ok)
         }.show()
     }

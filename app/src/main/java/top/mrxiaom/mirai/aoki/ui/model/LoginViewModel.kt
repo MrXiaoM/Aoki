@@ -29,7 +29,8 @@ class QRLoginRequest(
     val state: QRCodeLoginListener.State?
 )
 data class LoginResult(
-    val success: Bot? = null,
+    val success: Boolean,
+    val bot: Bot,
     val error: Throwable? = null
 )
 
@@ -48,13 +49,13 @@ class LoginViewModel : ViewModel() {
     fun login(bot: Bot) = viewModelScope.launch {
         try {
             bot.login()
-            _loginResult.value = LoginResult(success = bot)
+            _loginResult.value = LoginResult(true, bot)
         } catch (t: Throwable) {
-            _loginResult.value = LoginResult(error = t)
+            _loginResult.value = LoginResult(false, bot, t)
         }
     }
     fun cancelLogin(bot: Bot) {
-        _loginResult.value = LoginResult(error = UserCancelledLoginException())
+        _loginResult.value = LoginResult(false, bot, UserCancelledLoginException())
         bot.close()
     }
 }

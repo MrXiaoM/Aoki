@@ -11,8 +11,10 @@ import java.io.File
 object BotManager {
     var defaultProtocol = BotConfiguration.MiraiProtocol.ANDROID_PHONE
     var defaultHbStrategy = BotConfiguration.HeartbeatStrategy.STAT_HB
+    private val tempLoginType = mutableMapOf<Long, String>()
     fun newBotQRLogin(root: File, qq: Long, conf: BotConfiguration.() -> Unit = {}): Bot =
         BotFactory.newBot(qq, BotAuthorization.byQRCode()) {
+            tempLoginType[qq] = "QRCode"
             workingDir = File(root, "bots/$qq").also { it.mkdirsQuietly() }
             fileBasedDeviceInfoAndroid()
             protocol = defaultProtocol
@@ -26,6 +28,7 @@ object BotManager {
         }
     fun newBot(root: File, qq: Long, password: String, conf: BotConfiguration.() -> Unit = {}): Bot =
         BotFactory.newBot(qq, BotAuthorization.byPassword(password)) {
+            tempLoginType[qq] = "Password"
             workingDir = File(root, "bots/$qq").also { it.mkdirsQuietly() }
             fileBasedDeviceInfoAndroid()
             protocol = defaultProtocol
@@ -37,4 +40,6 @@ object BotManager {
             loginSolver = AokiLoginSolver
             conf()
         }
+
+    fun getLoginType(qq: Long): String = tempLoginType[qq] ?: "UNKNOWN"
 }
