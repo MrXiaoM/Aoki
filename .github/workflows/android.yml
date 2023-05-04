@@ -37,5 +37,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "*.apk"
+          prerelease: ${{ contains(github.ref, 'pre') }}
           token: ${{ github.token }}
           bodyFile: "release-note.md"
