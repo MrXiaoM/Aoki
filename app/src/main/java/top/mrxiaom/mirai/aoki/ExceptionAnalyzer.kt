@@ -17,6 +17,7 @@ object ExceptionAnalyzer {
             this is UserCancelledLoginException -> "用户主动取消了登录操作".also { stacktrace = false }
             msg.contains("code=235") -> """
                 出现了 235 错误，你的账号可能已被风控，请尝试以下方法解决:
+                * 检查密码是否错误，密码长度是否在16位以内
                 * 先使用官方QQ客户端登录机器人账号
                 * 更换协议
                 * 到「账号管理」删除所有数据
@@ -32,6 +33,7 @@ object ExceptionAnalyzer {
             """.trimIndent()
             msg.contains("code=45") -> """
                 出现了 45 错误，你的账号已被风控，请尝试以下方法解决:
+                * 检查密码是否错误，密码长度是否在16位以内
                 * 先使用官方QQ客户端登录机器人账号
                 * 更换协议
                 * 到「账号管理」删除所有数据
@@ -46,20 +48,18 @@ object ExceptionAnalyzer {
             msg.contains("code=238") -> """
                 出现了 238 错误，请尝试更换到手机协议或平板协议再试，或者使用扫码登录。
             """.trimIndent()
-            msg.contains("returnCode = -10003") -> """
-                登录返回码 -10003，可能是登录会话已过期。
+            msg.contains("which may mean session expired.") -> """
+                登录出现异常返回码，可能是登录会话已过期。
                 请尝试到「账号管理」删除登录会话
             """.trimIndent()
             msg.contains("The login protocol must be") && msg.contains("while enabling qrcode login") -> """
                 你选择的协议不支持进行扫码登录。
             """.trimIndent()
             else -> null
-        }?.run { if (stacktrace) this +
-        """
-            ==============================
-            以下为原始异常信息，非开发者无需阅读
-            ==============================
-        """.trimIndent() else this } ?: ""
-        return analyze + if (analyze.isEmpty() || stacktrace) stackTraceToString() else ""
+        }?.run { if (stacktrace) (this + "\n\n" +
+            "==============================\n" +
+            "以下为原始异常信息，非开发者无需阅读 \n" +
+            "==============================\n\n") else this } ?: ""
+        return analyze + (if (stacktrace) stackTraceToString() else "")
     }
 }

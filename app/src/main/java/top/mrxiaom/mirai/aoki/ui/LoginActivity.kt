@@ -180,7 +180,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         loading.visibility = View.VISIBLE
-        if (!checkQRLogin.isChecked) password.visibility = View.GONE
+        if (!checkQRLogin.isChecked) password.visibility = View.INVISIBLE
         qq.isClickable = false
         password.isClickable = false
         login.isClickable = false
@@ -318,12 +318,7 @@ class LoginActivity : AppCompatActivity() {
                     Protocol: ${bot.configuration.protocol}, hbStrategy: ${bot.configuration.heartbeatStrategy}
                 """.trimIndent()
                 val protocolVersions = FixProtocolVersion.info().map { "${it.key}: ${it.value}" }.joinToString("\n")
-                log.text = """
-                    报错日志:
-                    $errorString
-                    协议信息:
-                    $protocolVersions
-                """.trimIndent()
+                log.text = "报错日志:\n$errorString\n\n协议信息:\n$protocolVersions"
             })
             buttonPositive(R.string.ok)
         }.show()
