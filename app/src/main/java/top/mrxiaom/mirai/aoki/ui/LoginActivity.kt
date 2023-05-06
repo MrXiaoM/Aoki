@@ -194,11 +194,11 @@ class LoginActivity : AppCompatActivity() {
             qq.text.toString().toLong(),
             password.text.toString()
         )
+        /*
         this@LoginActivity.dialog {
             setTitle(R.string.login_confirm)
             setCancelable(false)
             // TODO 编辑设备信息功能正在编写
-            /*
             buttonNeutral(R.string.edit_device_action) {
                 startActivity<EditDeviceInfoActivity> {
                     putExtra("qq", bot.id)
@@ -207,7 +207,6 @@ class LoginActivity : AppCompatActivity() {
                 login.isClickable = true
                 dismiss()
             }
-            */
             buttonPositive(R.string.ok) {
                 loginViewModel.login(bot)
                 dismiss()
@@ -217,6 +216,8 @@ class LoginActivity : AppCompatActivity() {
                 dismiss()
             }
         }.show()
+         */
+        loginViewModel.login(bot)
     }
     /**
      * 账号管理
