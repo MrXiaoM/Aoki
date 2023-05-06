@@ -38,5 +38,5 @@ jobs:
         with:
           artifacts: "*.apk"
           prerelease: ${{ contains(github.ref, 'pre') }}
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           bodyFile: "release-note.md"
