@@ -7,7 +7,6 @@
 
 ## 修复或变更
 * 优化 ProducerFailureException 的查看体验。
-* 将 mirai 版本升级到开发版 [2.15.0-dev-83](https://github.com/mamoe/mirai/actions/runs/4865587143)
 * 暂时移除确认登录对话框。
 * 修复报错信息前缩进不正常的问题。
 

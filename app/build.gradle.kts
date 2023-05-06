@@ -5,7 +5,7 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
 }
-val miraiVersion = "2.15.0-dev-83"
+val miraiVersion = "2.15.0-M1"
 
 android {
     namespace = "top.mrxiaom.mirai.aoki"

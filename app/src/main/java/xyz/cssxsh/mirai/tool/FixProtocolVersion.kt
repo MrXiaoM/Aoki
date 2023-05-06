@@ -86,18 +86,6 @@ public object FixProtocolVersion {
                     sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
                     buildTime = 1676531414L
                     ssoVersion = 19
-                }
-                impl.id < 537153294 -> impl.apply {
-                    apkId = "com.tencent.mobileqq"
-                    id = 537153294
-                    ver = "8.9.35.10440"
-                    sdkVer = "6.0.0.2535"
-                    miscBitMap = 0x08F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x00FF_32F2
-                    sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
-                    buildTime = 1676531414L
-                    ssoVersion = 19
                     supportsQRLogin = false
                 }
                 else -> impl
@@ -107,18 +95,6 @@ public object FixProtocolVersion {
             when {
                 null == impl -> null
                 impl.runCatching { id }.isFailure -> impl.change {
-                    apkId = "com.tencent.mobileqq"
-                    id = 537152242
-                    ver = "8.9.35.10440"
-                    sdkVer = "6.0.0.2535"
-                    miscBitMap = 0x08F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x00FF_32F2
-                    sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
-                    buildTime = 1676531414L
-                    ssoVersion = 19
-                }
-                impl.id < 537152242 -> impl.apply {
                     apkId = "com.tencent.mobileqq"
                     id = 537152242
                     ver = "8.9.35.10440"
@@ -150,19 +126,6 @@ public object FixProtocolVersion {
                     ssoVersion = 5
                     supportsQRLogin = true
                 }
-                impl.id < 537065138 -> impl.apply {
-                    apkId = "com.tencent.qqlite"
-                    id = 537065138
-                    ver = "2.0.8"
-                    sdkVer = "6.0.0.2365"
-                    miscBitMap = 0x00F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x00FF_32F2
-                    sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
-                    buildTime = 1559564731L
-                    ssoVersion = 5
-                    supportsQRLogin = true
-                }
                 else -> impl
             }
         }
@@ -170,18 +133,6 @@ public object FixProtocolVersion {
             when {
                 null == impl -> null
                 impl.runCatching { id }.isFailure -> impl.change {
-                    apkId = "com.tencent.minihd.qq"
-                    id = 537151363
-                    ver = "8.9.33.614"
-                    sdkVer = "6.0.0.2433"
-                    miscBitMap = 0x08F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x001E_10E0
-                    sign = "AA 39 78 F4 1F D9 6F F9 91 4A 66 9E 18 64 74 C7"
-                    buildTime = 1640921786L
-                    ssoVersion = 19
-                }
-                impl.id <= 537151363 -> impl.apply {
                     apkId = "com.tencent.minihd.qq"
                     id = 537151363
                     ver = "8.9.33.614"
@@ -212,9 +163,6 @@ public object FixProtocolVersion {
                     sign = "AA 39 78 F4 1F D9 6F F9 91 4A 66 9E 18 64 74 C7"
                     buildTime = 1595836208L
                     ssoVersion = 12
-                }
-                impl.id < 537128930 -> impl.apply {
-                    // TODO
                 }
                 else -> impl
             }
