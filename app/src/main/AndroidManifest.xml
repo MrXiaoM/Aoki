@@ -19,16 +19,6 @@
             android:theme="@style/Theme.Aoki"
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
-        <activity
-                android:name=".EditActivity"
-                android:exported="false"
-                android:label="@string/title_activity_edit"
-                android:theme="@style/Theme.Aoki.NoActionBar">
-            <meta-data
-                    android:name="android.app.lib_name"
-                    android:value=""/>
-        </activity>
-
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="top.mrxiaom.mirai.aoki.fileprovider"
@@ -53,8 +43,9 @@
                     android:value=""/>
         </activity>
         <activity
-                android:name=".ui.EditDeviceInfoActivity"
-                android:exported="false">
+                android:name=".ui.SettingsActivity"
+                android:exported="false"
+                android:launchMode="singleInstance">
             <meta-data
                     android:name="android.app.lib_name"
                     android:value=""/>

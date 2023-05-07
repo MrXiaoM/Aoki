@@ -5,25 +5,25 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
+import android.text.Html
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.*
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.auth.BotAuthorization
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
 import net.mamoe.mirai.utils.BotConfiguration.MiraiProtocol
-import net.mamoe.mirai.utils.DeviceVerificationRequests
 import top.mrxiaom.mirai.aoki.*
 import top.mrxiaom.mirai.aoki.AokiLoginSolver.userAgent
 import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
@@ -36,9 +36,6 @@ import xyz.cssxsh.mirai.tool.FixProtocolVersion
 import java.io.File
 import java.net.URL
 import java.util.*
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.DurationUnit
 
 
 class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::class) {
@@ -88,6 +85,7 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.toolbar_about -> startActivity<AboutActivity>()
+                R.id.toolbar_settings -> startActivity<SettingsActivity>()
             }
             return@setOnMenuItemClickListener false
         }
@@ -146,6 +144,86 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         login.setOnClickListener { login() }
         accounts.setOnClickListener { accountManage() }
         supportActionBar?.setDisplayUseLogoEnabled(true)
+    }
+
+    fun checkUpdate() = loginViewModel.viewModelScope.launch {
+        val config = getSharedPreferences("top.mrxiaom.mirai.aoki_preferences", MODE_PRIVATE)
+        if (config.getBoolean("update_notice", true)) {
+            val isPreRelease = config.getString("update_channel", "release") == "pre-release"
+            val proxy = config.getString("update_proxy", "https://ghproxy.com/") ?: ""
+            val releaseUrl = URL("https://api.github.com/repos/MrXiaoM/Aoki/releases${if (isPreRelease) "?per_page=1" else "/latest"}")
+            withContext(Dispatchers.IO) {
+                val connection = releaseUrl.openConnection().apply {
+                    addRequestProperty("User-Agent", MiraiProtocol.ANDROID_PHONE.userAgent)
+                    connectTimeout = 30_000
+                    readTimeout = 30_000
+                    connect()
+                }
+                val raw = connection.getInputStream().readBytes().toString(Charsets.UTF_8)
+                val json = if (raw.startsWith("["))
+                    Json.parseToJsonElement(raw).jsonArrayOrNull?.getOrNull(0)?.jsonObject
+                else Json.parseToJsonElement(raw).jsonObjectOrNull
+                if (json != null) {
+                    val tag = json["tag_name"]?.jsonPrimitive?.contentOrNull ?: return@withContext Unit.apply {
+                        Toast.makeText(this@LoginActivity, R.string.update_check_failed, Toast.LENGTH_SHORT).show()
+                    }
+                    if (checkVersion(tag)) {
+                        // 懒得获取资产，直接拼链接
+                        var url = "https://github.com/MrXiaoM/Aoki/releases/download/$tag/Aoki_$tag.apk"
+                        if (proxy.isNotEmpty()) url = proxy.removeSuffix("/") + "/" + url
+                        val body = json["body"]?.jsonPrimitive?.contentOrNull ?: "没有更新日志"
+                        dialog {
+                            setTitle(String.format(text(R.string.update_fetch_title), tag))
+                            setView(ScrollView(context).apply {
+                                addView(TextView(context).apply {
+                                    text = Html.fromHtml(body, 0)
+                                    movementMethod = LinkMovementMethod.getInstance()
+                                })
+                            })
+                            buttonNeutral(R.string.update_fetch_download) {
+                                val file = File(externalRoot, "Aoki_$tag.apk")
+                                Toast.makeText(this@LoginActivity, String.format(text(R.string.update_download_start), file.absolutePath), Toast.LENGTH_LONG).show()
+                                URL(url).openConnection().apply {
+                                    addRequestProperty("User-Agent", MiraiProtocol.ANDROID_PHONE.userAgent)
+                                    readTimeout = 30_000
+                                    connectTimeout = 30_000
+                                    kotlin.runCatching { this.connect()}
+                                        .onSuccess {
+                                            Toast.makeText(this@LoginActivity, R.string.update_download_done, Toast.LENGTH_SHORT).show()
+
+                                            file.writeBytes(getInputStream().readBytes())
+                                            // 打开 APK
+                                            val intent = Intent(Intent.ACTION_VIEW)
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            val uri: Uri = FileProvider.getUriForFile(this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", file)
+                                            intent.setDataAndType(uri, "application/vnd.android.package-archive")
+                                            startActivity(intent)
+                                        }
+                                        .onFailure {
+                                            Toast.makeText(this@LoginActivity, String.format(text(R.string.update_download_failed), it.localizedMessage), Toast.LENGTH_LONG).show()
+                                        }
+                                }
+                            }
+                            buttonNegative(R.string.cancel)
+                            buttonPositive(R.string.update_fetch_copy) { copy(url) }
+                        }.show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkVersion(remoteVersionRaw: String): Boolean {
+        val remote = parseVersion(remoteVersionRaw.substring(1))
+        val current = parseVersion(packageInfo.versionName)
+        if (remote >= current) {
+            val currentPre = current.pre
+            val remotePre = remote.pre
+            if (currentPre > 0) return false
+            return currentPre < remotePre
+        }
+        return false
     }
 
     private fun updateFooter() {

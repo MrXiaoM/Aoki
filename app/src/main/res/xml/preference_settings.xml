@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.preference.PreferenceCategory
+            android:key="update"
+            android:title="更新提醒">
+        <CheckBoxPreference
+                app:key="update_notice"
+                app:title="启用"
+                app:summary="是否在打开应用时检查更新并提醒"
+                app:defaultValue="true"/>
+        <ListPreference
+                app:key="update_channel"
+                app:title="更新频道"
+                app:entries="@array/update_channel_display"
+                app:entryValues="@array/update_channel"
+                app:defaultValue="release"
+                app:summary="稳定版"/>
+        <EditTextPreference
+                app:key="update_proxy"
+                app:title="代理服务地址"
+                app:dialogTitle="填写 gh-proxy 实例地址"
+                app:summary="设置使用 gh-proxy 代理下载更新 (留空为不使用)"
+                app:defaultValue="https://ghproxy.com/"/>
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

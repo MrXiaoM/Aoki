@@ -16,7 +16,7 @@
                 android:theme="?attr/actionBarTheme"
                 android:minHeight="?attr/actionBarSize"
                 app:navigationIcon="@drawable/back"
-                android:id="@+id/toolbar" app:title="@string/edit_device_title"
+                android:id="@+id/toolbar" app:title="@string/settings_title"
                 android:foregroundTint="@color/teal_200"/>
         <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/settings"
