@@ -1,28 +1,44 @@
 package top.mrxiaom.mirai.aoki.util
 
 import android.app.Activity
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
+import android.widget.*
+import androidx.annotation.ArrayRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.getSystemService
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.viewbinding.ViewBinding
+import top.mrxiaom.mirai.aoki.R
+import kotlin.reflect.KClass
 
+abstract class AokiActivity<T : ViewBinding>(private val bindingClass: KClass<T>)  : AppCompatActivity() {
+    lateinit var mHandler: Handler
+    lateinit var binding: T
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mHandler = Handler(mainLooper)
+        binding = bindingClass.java.getDeclaredMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as T
+        setContentView(binding.root)
+    }
+}
+fun <A : AokiActivity<*>> A.runInUIThread(action: A.() -> Unit) {
+    mHandler.post { action() }
+}
 fun Activity.needPermission(requestId: Int, vararg permissions: String) {
     val deniedPerms = permissions.filter {
         ActivityCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
@@ -104,7 +120,7 @@ inline fun <reified T> Activity.startActivityForResult(
 }
 fun <T> Context.setupDropdownBox(
     dropdownBox: Spinner,
-    @IdRes array: Int,
+    @ArrayRes array: Int,
     vararg values: T,
     onSelected: (i: Int, value: T) -> Unit
 ) {
@@ -131,7 +147,16 @@ fun Context.dialog(block: AlertDialog.Builder.() -> Unit): AlertDialog {
     builder.block()
     return builder.create()
 }
-
+val Context.packageInfo: PackageInfo
+    @Suppress("deprecation")
+    get() =  packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS)
+fun Context.copy(text: String) = copy(text, text)
+fun Context.copy(label: String, text: String) {
+    Toast.makeText(this, getSystemService<ClipboardManager>()?.let { clip ->
+        clip.setPrimaryClip(ClipData.newPlainText(label, text))
+        R.string.scan_copy_done
+    } ?: R.string.scan_copy_failed, Toast.LENGTH_SHORT).show()
+}
 fun <T> LifecycleOwner.observe(data: LiveData<T>, block: T.() -> Unit) {
     data.observe(this) { it?.block() }
 }

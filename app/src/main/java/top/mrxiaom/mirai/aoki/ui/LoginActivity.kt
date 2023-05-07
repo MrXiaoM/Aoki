@@ -41,11 +41,8 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
 
-class LoginActivity : AppCompatActivity() {
-
-    private lateinit var mHandler: Handler
+class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::class) {
     internal val loginViewModel = LoginViewModel()
-    private lateinit var binding: ActivityLoginBinding
     private lateinit var externalRoot: File
 
     private lateinit var qq: EditText
@@ -57,16 +54,9 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginSolverDialog: LoginSolverDialog
     private lateinit var qrloginDialog: QRLoginDialog
-    fun runInUIThread(action: LoginActivity.() -> Unit) {
-        mHandler.post { action() }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mHandler = Handler(mainLooper)
-
         externalRoot = File(getExternalFilesDir(null), "AokiMirai").also { it.mkdirsQuietly() }
-
         val handler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { p0, e ->
             try {
@@ -77,8 +67,7 @@ class LoginActivity : AppCompatActivity() {
             handler?.uncaughtException(p0, e)
         }
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
 
         AokiLoginSolver.loginActivity = this
@@ -146,30 +135,28 @@ class LoginActivity : AppCompatActivity() {
             login.isClickable = true
             checkQRLogin.isClickable = true
         }
-        qq.setOnEditorActionListener { view, actionId, _ ->
-            if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login(view)
+        qq.setOnEditorActionListener { _, actionId, _ ->
+            if (checkQRLogin.isChecked && actionId == EditorInfo.IME_ACTION_DONE) login()
             false
         }
-        password.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) login(view)
+        password.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) login()
             false
         }
-        login.setOnClickListener(this::login)
-        accounts.setOnClickListener(this::accountManage)
+        login.setOnClickListener { login() }
+        accounts.setOnClickListener { accountManage() }
         supportActionBar?.setDisplayUseLogoEnabled(true)
     }
 
     private fun updateFooter() {
         binding.infomation.apply {
-            val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
-
             text = """
-                Aoki $version, mirai ${BuildConstants.miraiVersion}
+                Aoki ${packageInfo.versionName}, mirai ${BuildConstants.miraiVersion}
                 User Agent (${BotManager.defaultProtocol}): ${BotManager.defaultProtocol.userAgent}
                 """.trimIndent()
         }
     }
-    private fun login(view: View) {
+    private fun login() {
         if (checkQRLogin.isChecked && !BotManager.defaultProtocol.isSupportQRLogin) {
             Toast.makeText(this, R.string.tips_not_support_qrlogin, Toast.LENGTH_LONG).show()
             return
@@ -222,7 +209,7 @@ class LoginActivity : AppCompatActivity() {
     /**
      * 账号管理
      */
-    private fun accountManage(view: View) = dialog {
+    private fun accountManage() = dialog {
         setTitle(R.string.accounts_title)
         buttonNegative(R.string.cancel)
         val accountList = File(externalRoot, "bots").listFiles()?.mapNotNull {
@@ -310,10 +297,9 @@ class LoginActivity : AppCompatActivity() {
             setView(layout(R.layout.dialog_login_failed) {
                 val info = findViewById<TextView>(R.id.dialog_login_failed_info)
                 val log = findViewById<TextView>(R.id.dialog_login_failed_log)
-                val version = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS).versionName
                 val loginType = BotManager.getLoginType(bot.id)
                 info.text = """
-                    Aoki $version Login Failed! (by $loginType)
+                    Aoki ${packageInfo.versionName} Login Failed! (by $loginType)
                     Android ${Build.VERSION.RELEASE} 
                     Powered by Mirai ${BuildConstants.miraiVersion}
                     Protocol: ${bot.configuration.protocol}, hbStrategy: ${bot.configuration.heartbeatStrategy}

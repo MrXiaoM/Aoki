@@ -4,19 +4,14 @@ import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivityAboutBinding
+import top.mrxiaom.mirai.aoki.util.AokiActivity
 import top.mrxiaom.mirai.aoki.util.text
 
-class AboutActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAboutBinding
-
+class AboutActivity : AokiActivity<ActivityAboutBinding>(ActivityAboutBinding::class) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityAboutBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
         binding.textView.apply {
@@ -30,7 +25,7 @@ class AboutActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> finish();
+            android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
     }

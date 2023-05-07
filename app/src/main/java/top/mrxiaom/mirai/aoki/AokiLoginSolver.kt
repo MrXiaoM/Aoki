@@ -21,6 +21,7 @@ import top.mrxiaom.mirai.aoki.ui.model.ScanRequest
 import top.mrxiaom.mirai.aoki.ui.model.SlideRequest
 import top.mrxiaom.mirai.aoki.ui.model.SmsRequest
 import top.mrxiaom.mirai.aoki.util.buttonPositive
+import top.mrxiaom.mirai.aoki.util.runInUIThread
 
 object AokiLoginSolver : LoginSolver() {
 

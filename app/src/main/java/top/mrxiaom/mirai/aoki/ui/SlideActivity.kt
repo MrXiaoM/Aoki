@@ -10,21 +10,17 @@ import kotlinx.serialization.json.jsonPrimitive
 import top.mrxiaom.mirai.aoki.AokiLoginSolver
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivitySlideBinding
+import top.mrxiaom.mirai.aoki.util.AokiActivity
 
 /**
  * 验证逻辑来自
  * https://github.com/mzdluo123/TxCaptchaHelper/blob/master/app/src/main/java/io/github/mzdluo123/txcaptchahelper/CaptchaActivity.kt
  */
-class SlideActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySlideBinding
+class SlideActivity : AokiActivity<ActivitySlideBinding>(ActivitySlideBinding::class) {
     private var qq: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_slide)
-
-        binding = ActivitySlideBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         qq = intent.getLongExtra("qq", 0)
         if (qq == 0L) finish().let { return }

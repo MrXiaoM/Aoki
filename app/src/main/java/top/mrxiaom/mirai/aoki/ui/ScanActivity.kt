@@ -6,20 +6,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivityScanBinding
+import top.mrxiaom.mirai.aoki.util.AokiActivity
+import top.mrxiaom.mirai.aoki.util.copy
 
-class ScanActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityScanBinding
+class ScanActivity : AokiActivity<ActivityScanBinding>(ActivityScanBinding::class) {
     private var qq: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityScanBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         qq = intent.getLongExtra("qq", 0)
         if (qq == 0L) finish().let { return }
@@ -37,10 +34,7 @@ class ScanActivity : AppCompatActivity() {
 
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.toolbar_copy -> Toast.makeText(this@ScanActivity, getSystemService<ClipboardManager>()?.let {
-                        it.setPrimaryClip(ClipData.newPlainText(url, url))
-                        R.string.scan_copy_done
-                    } ?: R.string.scan_copy_failed, Toast.LENGTH_SHORT).show()
+                R.id.toolbar_copy -> copy(url)
                 R.id.toolbar_refresh -> webView.reload()
             }
             return@setOnMenuItemClickListener false
