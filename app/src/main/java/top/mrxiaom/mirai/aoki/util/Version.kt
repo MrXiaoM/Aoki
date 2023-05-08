@@ -9,9 +9,16 @@ class Version(
     val suffix: String
 ) {
     override operator fun equals(other: Any?): Boolean {
-        return other is Version && compareTo(other) == 0 && this.suffix == other.suffix
+        return other is Version && equals(other, true)
+    }
+    fun equals(other: Version, checkSuffix: Boolean): Boolean {
+        return this.main == other.main
+                && this.minor == other.minor
+                && this.patch == other.patch
+                && (!checkSuffix || suffix == other.suffix)
     }
     operator fun compareTo(that: Version): Int {
+        if (equals(that, false)) return 0
         if (this.main > that.main) return 1
         if (this.main < that.main) return -1
         if (this.minor > that.minor) return 1

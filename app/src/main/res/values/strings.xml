@@ -22,6 +22,7 @@
     <string name="update_download_start">开始下载 %s</string>
     <string name="update_download_failed">下载失败 %s</string>
     <string name="update_download_done">下载完成</string>
+    <string name="update_downloading_title">正在下载</string>
     <string name="settings">设置</string>
     <string name="settings_title">设置</string>
     <string name="prompt_qq">QQ号</string>
