@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.webkit.WebView
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.core.view.setPadding
@@ -194,10 +195,9 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         dialogInUIThread {
             setTitle(String.format(text(R.string.update_fetch_title), tag))
             setView(ScrollView(context).apply {
-                setPadding(20)
-                addView(TextView(context).apply {
-                    text = Html.fromHtml(MDTool.markdown2Html(body), 0)
-                    movementMethod = LinkMovementMethod.getInstance()
+                setPadding(24)
+                addView(WebView(context).apply {
+                    loadData("<html><head><link rel=\"stylesheet\" href=\"https://cdn.bootcdn.net/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css\"></head><body>" + MDTool.markdown2Html(body) + "</body></html>", "text/html", "utf-8")
                 })
             })
             buttonNeutral(R.string.update_fetch_download) {
