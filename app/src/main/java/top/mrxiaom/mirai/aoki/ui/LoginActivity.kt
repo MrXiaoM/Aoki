@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Html
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
@@ -22,7 +23,6 @@ import androidx.preference.PreferenceManager
 import com.youbenzi.mdtool.tool.MDTool
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.utils.BotConfiguration.HeartbeatStrategy
@@ -33,6 +33,7 @@ import top.mrxiaom.mirai.aoki.ExceptionAnalyzer.analyze
 import top.mrxiaom.mirai.aoki.databinding.ActivityLoginBinding
 import top.mrxiaom.mirai.aoki.ui.dialog.LoginSolverDialog
 import top.mrxiaom.mirai.aoki.ui.dialog.QRLoginDialog
+import top.mrxiaom.mirai.aoki.ui.model.CheckUpdateResult
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.util.*
 import xyz.cssxsh.mirai.tool.FixProtocolVersion
@@ -56,11 +57,13 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
 
     private lateinit var loginSolverDialog: LoginSolverDialog
     private lateinit var qrloginDialog: QRLoginDialog
+    private lateinit var checkUpdateResult: CheckUpdateResult
 
     override fun onCreate(savedInstanceState: Bundle?) {
         externalRoot = File(getExternalFilesDir(null), "AokiMirai").also { it.mkdirsQuietly() }
         val handler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { p0, e ->
+            e.printStackTrace()
             try {
                 File(externalRoot, "crash.log").writeText(e.stackTraceToString())
             } catch (_: Throwable) {
@@ -152,145 +155,129 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         supportActionBar?.setDisplayUseLogoEnabled(true)
     }
 
-    fun checkUpdate() = loginViewModel.viewModelScope.launch(Dispatchers.IO) {
+    private fun checkUpdate() = loginViewModel.viewModelScope.launch(Dispatchers.IO) {
         val config = PreferenceManager.getDefaultSharedPreferences(this@LoginActivity)
         val enableUpdate = config.getBoolean("update_notice", true)
 
-        @SuppressLint("SetTextI18n")
-        fun log(s: String) = runInUIThread {
-            logs.add(s)
-            updateFooter()
+        if (!enableUpdate) return@launch
+        if (this@LoginActivity::checkUpdateResult.isInitialized) return@launch
+        val isPreRelease = config.getString("update_channel", "release") == "pre-release"
+        val proxy = config.getString("update_proxy", "https://ghproxy.com/") ?: ""
+        val releaseUrl =
+            URL("https://api.github.com/repos/MrXiaoM/Aoki/releases${if (isPreRelease) "?per_page=1" else "/latest"}")
+
+        val connection = releaseUrl.openConnection().apply {
+            addRequestProperty("User-Agent", MiraiProtocol.ANDROID_PHONE.userAgent)
+            connectTimeout = 30_000
+            readTimeout = 30_000
+            connect()
         }
-        log("cfg: " + config.all.map { "${it.key}=${it.value}" }.joinToString(", "))
-        if (enableUpdate) {
-            val isPreRelease = config.getString("update_channel", "release") == "pre-release"
-            val proxy = config.getString("update_proxy", "https://ghproxy.com/") ?: ""
-            val releaseUrl =
-                URL("https://api.github.com/repos/MrXiaoM/Aoki/releases${if (isPreRelease) "?per_page=1" else "/latest"}")
+        val raw = connection.getInputStream().readBytes().toString(Charsets.UTF_8)
+        val json = if (raw.startsWith("["))
+            Json.parseToJsonElement(raw).jsonArrayOrNull?.getOrNull(0)?.jsonObject
+        else Json.parseToJsonElement(raw).jsonObjectOrNull
+        if (json == null) return@launch
+        val tag = json["tag_name"]?.jsonPrimitive?.contentOrNull ?: return@launch Unit.apply {
+            Toast.makeText(this@LoginActivity, R.string.update_check_failed, Toast.LENGTH_SHORT).show()
+        }
+        if (!checkVersion(tag)) return@launch
+        // 懒得获取资产，直接拼链接
+        var url = "https://github.com/MrXiaoM/Aoki/releases/download/$tag/Aoki_$tag.apk"
+        if (proxy.isNotEmpty()) url = proxy.removeSuffix("/") + "/" + url
+        val body = json["body"]?.jsonPrimitive?.contentOrNull ?: "没有更新日志"
+        checkUpdateResult = CheckUpdateResult(tag, url, body)
+    }.invokeOnCompletion {
+        if (!this::checkUpdateResult.isInitialized) return@invokeOnCompletion
+        val tag = checkUpdateResult.tag
+        val url = checkUpdateResult.url
+        val body = checkUpdateResult.body
+        dialogInUIThread {
+            setTitle(String.format(text(R.string.update_fetch_title), tag))
+            setView(ScrollView(context).apply {
+                setPadding(20)
+                addView(TextView(context).apply {
+                    text = Html.fromHtml(MDTool.markdown2Html(body), 0)
+                    movementMethod = LinkMovementMethod.getInstance()
+                })
+            })
+            buttonNeutral(R.string.update_fetch_download) {
+                val file = File(externalRoot, "export/Aoki_$tag.apk")
+                file.mkdirsParent()
+                Toast.makeText(
+                    this@LoginActivity,
+                    String.format(text(R.string.update_download_start), file.absolutePath),
+                    Toast.LENGTH_LONG
+                ).show()
 
-                val connection = releaseUrl.openConnection().apply {
-                    addRequestProperty("User-Agent", MiraiProtocol.ANDROID_PHONE.userAgent)
-                    connectTimeout = 30_000
-                    readTimeout = 30_000
-                    connect()
-                }
-                val raw = connection.getInputStream().readBytes().toString(Charsets.UTF_8)
-                val json = if (raw.startsWith("["))
-                    Json.parseToJsonElement(raw).jsonArrayOrNull?.getOrNull(0)?.jsonObject
-                else Json.parseToJsonElement(raw).jsonObjectOrNull
-                if (json == null) return@launch
-                val tag = json["tag_name"]?.jsonPrimitive?.contentOrNull ?: return@launch Unit.apply {
-                    Toast.makeText(this@LoginActivity, R.string.update_check_failed, Toast.LENGTH_SHORT).show()
-                }
-                if (!checkVersion(tag)) return@launch
-                // 懒得获取资产，直接拼链接
-                var url = "https://github.com/MrXiaoM/Aoki/releases/download/$tag/Aoki_$tag.apk"
-                if (proxy.isNotEmpty()) url = proxy.removeSuffix("/") + "/" + url
-                val body = json["body"]?.jsonPrimitive?.contentOrNull ?: "没有更新日志"
-                dialogInUIThread {
-                    setTitle(String.format(text(R.string.update_fetch_title), tag))
-                    setView(ScrollView(context).apply {
-                        setPadding(20)
-                        addView(TextView(context).apply {
-                            text = Html.fromHtml(MDTool.markdown2Html(body), 0)
-                            movementMethod = LinkMovementMethod.getInstance()
-                        })
-                    })
-                    buttonNeutral(R.string.update_fetch_download) {
-                        val file = File(externalRoot, "Aoki_$tag.apk")
-                        Toast.makeText(
-                            this@LoginActivity,
-                            String.format(text(R.string.update_download_start), file.absolutePath),
-                            Toast.LENGTH_LONG
-                        ).show()
-                        var isCancelled = false
-                        val progress = ProgressBar(context).apply {
-                            max = 100
-                        }
-                        val progressText = TextView(context).apply {
+                var isCancelled = false
+                val dialogLayout = layout(R.layout.dl_progress)
+                val progress = dialogLayout.findViewById<ProgressBar>(R.id.dl_progress_bar)
+                val progressText = dialogLayout.findViewById<TextView>(R.id.dl_progress_info)
+                val dialog = dialog {
+                    setTitle(R.string.update_downloading_title)
+                    setCancelable(false)
+                    setView(dialogLayout)
+                    buttonNegative(R.string.cancel) {
+                        isCancelled = true
+                    }
+                }.also { it.show() }
 
-                        }
-                        val dialog = dialog {
-                            setTitle(R.string.update_downloading_title)
-                            setCancelable(false)
-                            setView(LinearLayout(context).apply {
-                                setPadding(20)
-                                addView(progress)
-                                addView(progressText)
-                            })
-                            buttonNegative(R.string.cancel) {
-                                isCancelled = true
+                loginViewModel.viewModelScope.launch(Dispatchers.IO) {
+                    kotlin.runCatching {
+                        val dl = URL(url).openConnection() as HttpURLConnection
+                        dl.connect()
+                        val length = dl.contentLength.toDouble()
+                        val input = dl.inputStream
+                        val out = FileOutputStream(file)
+
+                        var count = 0;
+                        val buffer = ByteArray(1024)
+                        while (!isCancelled) {
+                            val read = input.read(buffer)
+                            // 下载完成
+                            if (read < 0) {
+                                dialog.dismiss()
+                                break
                             }
+                            count += read
+                            // 计算进度条当前位置
+                            val prog = count.toDouble() * 100.0 / length
+                            runInUIThread {
+                                progress.progress = prog.toInt()
+                                progressText.text = String.format("%.2f", prog) + "%"
+                            }
+                            out.write(buffer, 0, read)
                         }
-                        launch(Dispatchers.IO) {
-                            log("正在下载 $url")
-                            val downloadConnection = URL(url).openConnection().apply {
-                                addRequestProperty("User-Agent", MiraiProtocol.ANDROID_PHONE.userAgent)
-                                readTimeout = 30_000
-                                connectTimeout = 30_000
-                            }
-                            kotlin.runCatching {
-                                val dl = URL(url).openConnection() as HttpURLConnection
-                                dl.connect()
-                                val length = dl.contentLength
-                                val input = dl.inputStream
-                                val out = FileOutputStream(file)
+                        out.close()
+                        input.close()
+                    }.onSuccess {
+                        runInUIThread {
+                            dialog.dismiss()
+                            Toast.makeText(
+                                this@LoginActivity, R.string.update_download_done, Toast.LENGTH_SHORT
+                            ).show()
 
-                                var count = 0;
-                                val buffer = ByteArray(1024)
-                                while (!isCancelled) {
-                                    val read = input.read(buffer)
-                                    count += read
-                                    // 计算进度条当前位置
-                                    val prog = count / length * 100.0
-                                    runInUIThread {
-                                        progress.progress = prog.toInt()
-                                        progressText.text = String.format("%.2f", prog) + "%"
-                                    }
-                                    // 下载完成
-                                    if (read < 0) {
-                                        dialog.dismiss()
-                                        break
-                                    }
-                                    out.write(buffer, 0, read)
-                                }
-                                out.close()
-                                input.close()
-                            }
-                                .onSuccess {
-                                    Toast.makeText(
-                                        this@LoginActivity, R.string.update_download_done, Toast.LENGTH_SHORT
-                                    ).show()
+                            installUpdateApk(file)
+                        }
+                    }.onFailure {
+                        it.printStackTrace()
+                        runInUIThread {
 
-                                    log("下载完成")
-                                    // 打开 APK
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    val uri: Uri = FileProvider.getUriForFile(
-                                        this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", file
-                                    )
-                                    intent.setDataAndType(uri, "application/vnd.android.package-archive")
-                                    startActivity(intent)
-                                }
-                                .onFailure {
-                                    Toast.makeText(
-                                        this@LoginActivity,
-                                        String.format(
-                                            text(R.string.update_download_failed),
-                                            it.stackTraceToString()
-                                        ),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    throw it
-                                }
+                            Toast.makeText(
+                                this@LoginActivity,
+                                String.format(
+                                    text(R.string.update_download_failed),
+                                    it.stackTraceToString()
+                                ),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
-                    buttonNegative(R.string.cancel)
-                    buttonPositive(R.string.update_fetch_copy) { copy(url) }
-                    show()
                 }
-
+            }
+            buttonNegative(R.string.cancel)
+            buttonPositive(R.string.update_fetch_copy) { copy(url) }
+            show()
         }
     }
 
@@ -316,6 +303,31 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
             return currentPre < remotePre
         }
         return false
+    }
+    private var updateApkFile: File? = null
+    private fun installUpdateApk(apkFile: File? = null, checkPerm: Boolean = true) {
+        if (apkFile != null) updateApkFile = apkFile
+        println("install apk ${updateApkFile?.absolutePath}")
+        val file = updateApkFile ?: return
+        if (checkPerm && !packageManager.canRequestPackageInstalls()) {
+            println("permission denied")
+            val packageURI = Uri.parse("package:$packageName")
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI)
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, 2)
+            return
+        }
+        println("permission allowed")
+
+        // 打开 APK
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val uri: Uri = FileProvider.getUriForFile(
+            this@LoginActivity, "top.mrxiaom.mirai.aoki.fileprovider", file
+        )
+        intent.setDataAndType(uri, "application/vnd.android.package-archive")
+        startActivity(intent)
     }
     private val logs = mutableListOf<String>()
     private fun updateFooter() {
@@ -493,7 +505,7 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
             share("$account.zip")
         } catch (t: Throwable) {
             runInUIThread {
-                Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG)
+                Toast.makeText(this, t.stackTraceToString(), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -527,8 +539,14 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data != null && requestCode == 1 && resultCode == RESULT_OK) {
-            loginSolverDialog.onScanResult(data)
+        if (resultCode == RESULT_OK) {
+            println("$requestCode OK")
+            if (data != null && requestCode == 1) {
+                loginSolverDialog.onScanResult(data)
+            }
+            if (requestCode == 2) {
+                installUpdateApk(checkPerm = false)
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

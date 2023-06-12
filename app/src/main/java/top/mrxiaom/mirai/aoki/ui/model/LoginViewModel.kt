@@ -33,6 +33,11 @@ data class LoginResult(
     val bot: Bot,
     val error: Throwable? = null
 )
+data class CheckUpdateResult(
+    val tag: String,
+    val url: String,
+    val body: String
+)
 
 class LoginViewModel : ViewModel() {
 
