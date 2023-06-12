@@ -29,6 +29,7 @@ abstract class AokiActivity<T : ViewBinding>(private val bindingClass: KClass<T>
     lateinit var mHandler: Handler
     lateinit var binding: T
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mHandler = Handler(mainLooper)
@@ -146,6 +147,9 @@ fun Context.dialog(block: AlertDialog.Builder.() -> Unit): AlertDialog {
     val builder = AlertDialog.Builder(this)
     builder.block()
     return builder.create()
+}
+fun AokiActivity<*>.dialogInUIThread(block: AlertDialog.Builder.() -> Unit) {
+    runInUIThread { dialog(block) }
 }
 val Context.packageInfo: PackageInfo
     @Suppress("deprecation")

@@ -53,5 +53,7 @@ dependencies {
     implementation("net.mamoe:mirai-core:$miraiVersion")
     implementation("net.mamoe:mirai-core-utils:$miraiVersion")
 
+    implementation("com.youbenzi:MDTool:1.2.4")
+
     implementation("org.bouncycastle:bcprov-jdk15on:1.67")
 }

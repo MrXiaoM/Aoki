@@ -3,12 +3,10 @@ package top.mrxiaom.mirai.aoki.ui
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.*
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import top.mrxiaom.mirai.aoki.AokiLoginSolver
-import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivitySlideBinding
 import top.mrxiaom.mirai.aoki.util.AokiActivity
 

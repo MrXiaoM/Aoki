@@ -28,6 +28,7 @@ fun File.mkdirsQuietly(): Boolean =
     } catch (_: Throwable) {
         false
     }
+fun File.mkdirsParent(): Boolean = parentFile?.mkdirsQuietly() ?: false
 fun zip(srcPath: File, zipPath: File) {
     zipPath.parentFile?.mkdirsQuietly()
     val srcParent = srcPath.parentFile ?: return
