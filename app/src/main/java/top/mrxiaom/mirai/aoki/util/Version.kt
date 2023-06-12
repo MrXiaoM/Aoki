@@ -1,6 +1,8 @@
 package top.mrxiaom.mirai.aoki.util
 
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 
 class Version(
     val main: Int,

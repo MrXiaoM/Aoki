@@ -1,6 +1,5 @@
 package top.mrxiaom.mirai.aoki.ui.dialog
 
-import android.app.Activity
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -8,7 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.auth.QRCodeLoginListener
-import net.mamoe.mirai.network.CustomLoginFailedException
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.ui.model.LoginViewModel
 import top.mrxiaom.mirai.aoki.ui.model.QRLoginRequest

@@ -9,9 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.Html
 import android.text.TextUtils
-import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo

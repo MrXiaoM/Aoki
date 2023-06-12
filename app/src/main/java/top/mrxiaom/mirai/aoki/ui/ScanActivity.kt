@@ -1,12 +1,8 @@
 package top.mrxiaom.mirai.aoki.ui
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.widget.Toast
-import androidx.core.content.getSystemService
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivityScanBinding
 import top.mrxiaom.mirai.aoki.util.AokiActivity
