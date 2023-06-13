@@ -5,7 +5,7 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
 }
-val miraiVersion = "2.15.0-M1"
+val miraiVersion = "2.15.0-dev-98"
 
 android {
     namespace = "top.mrxiaom.mirai.aoki"
@@ -43,8 +43,8 @@ dependencies {
     implementation("com.google.android.material:material:1.5.0")
     implementation("androidx.annotation:annotation:1.6.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
     implementation("androidx.preference:preference:1.2.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
 
@@ -56,5 +56,5 @@ dependencies {
     implementation("com.youbenzi:MDTool:1.2.4")
     implementation(project(":tlv544_enc"))
 
-    implementation("org.bouncycastle:bcprov-jdk15on:1.67")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
 }
