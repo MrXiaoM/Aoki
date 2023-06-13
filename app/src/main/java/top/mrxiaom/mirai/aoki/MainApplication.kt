@@ -1,9 +1,12 @@
 package top.mrxiaom.mirai.aoki
 
 import android.app.Application
+import net.mamoe.mirai.utils.Services
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import top.mrxiaom.mirai.aoki.mirai.EncryptProvider
 import xyz.cssxsh.mirai.tool.FixProtocolVersion
 import java.security.Security
+import kotlin.reflect.jvm.jvmName
 
 class MainApplication : Application() {
 
@@ -21,5 +24,6 @@ class MainApplication : Application() {
         super.onCreate()
         setUpECDHEnvironment()
         FixProtocolVersion.update()
+        Services.registerAsOverride("net.mamoe.mirai.internal.spi.EncryptService", EncryptProvider::class.jvmName) { EncryptProvider }
     }
 }
