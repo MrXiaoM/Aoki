@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Aoki"
 include(":app")
+include(":tlv544_enc")
