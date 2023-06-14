@@ -5,11 +5,11 @@ import net.mamoe.mirai.utils.Services
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import top.mrxiaom.mirai.aoki.mirai.EncryptProvider
 import xyz.cssxsh.mirai.tool.FixProtocolVersion
+import java.io.File
 import java.security.Security
 import kotlin.reflect.jvm.jvmName
 
-object MainApplication : Application() {
-
+class MainApplication : Application() {
     private fun setUpECDHEnvironment() {
         val provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME)
         if (provider != null) {
@@ -25,5 +25,8 @@ object MainApplication : Application() {
         setUpECDHEnvironment()
         FixProtocolVersion.update()
         Services.registerAsOverride("net.mamoe.mirai.internal.spi.EncryptService", EncryptProvider::class.jvmName) { EncryptProvider }
+    }
+    companion object {
+        internal lateinit var externalRoot: File
     }
 }

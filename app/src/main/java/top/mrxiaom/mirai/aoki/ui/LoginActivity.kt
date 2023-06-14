@@ -41,11 +41,11 @@ import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
-
+import top.mrxiaom.mirai.aoki.MainApplication.Companion.externalRoot
 
 class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::class) {
     internal val loginViewModel = LoginViewModel()
-    private lateinit var externalRoot: File
+
 
     private lateinit var qq: EditText
     private lateinit var password: EditText
@@ -361,7 +361,7 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
             qq.text.toString().toLong(),
             password.text.toString()
         )
-        /*
+
         this@LoginActivity.dialog {
             setTitle(R.string.login_confirm)
             setCancelable(false)
@@ -383,8 +383,6 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
                 dismiss()
             }
         }.show()
-         */
-        loginViewModel.login(bot)
     }
     /**
      * 账号管理

@@ -59,10 +59,10 @@ object AokiDeviceInfo {
      * 相对于 AokiMirai/bots 目录读取设备信息文件
      */
     fun DeviceInfo.Companion.loadFromAoki(filepath: String): DeviceInfo {
-        return File(MainApplication.getExternalFilesDir(null), "AokiMirai/bots/$filepath").loadAsDeviceInfo { generateForAndroid() }
+        return File(MainApplication.externalRoot, "bots/$filepath").loadAsDeviceInfo { generateForAndroid() }
     }
     fun DeviceInfo.saveToAoki(filepath: String) {
-        val file = File(MainApplication.getExternalFilesDir(null), "AokiMirai/bots/$filepath")
+        val file = File(MainApplication.externalRoot, "bots/$filepath")
         file.mkdirsParent()
         file.writeText(DeviceInfoManager.serialize(this, DeviceInfoManager.format))
     }
