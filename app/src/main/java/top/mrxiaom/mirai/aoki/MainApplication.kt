@@ -8,7 +8,7 @@ import xyz.cssxsh.mirai.tool.FixProtocolVersion
 import java.security.Security
 import kotlin.reflect.jvm.jvmName
 
-class MainApplication : Application() {
+object MainApplication : Application() {
 
     private fun setUpECDHEnvironment() {
         val provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME)
