@@ -7,9 +7,12 @@ object ExceptionAnalyzer {
         // 拆箱
         // Since 2.15.0-M1 #2502: net.mamoe.mirai.internal.network.auth.ProducerFailureException
         // Since 2.15.0? #2645: net.mamoe.mirai.utils.channels.ProducerFailureException
+        // Since 2.15.0? #2645: net.mamoe.mirai.network.BotAuthorizationException
         cause?.also {
-            if (this::class.java.name.contains("ProducerFailure"))
+            val clazz = this::class.java.name
+            if (clazz.contains("ProducerFailureException") || clazz.contains("BotAuthorizationException")) {
                 return it.analyze()
+            }
         }
         val msg = message ?: ""
         var stacktrace = true
