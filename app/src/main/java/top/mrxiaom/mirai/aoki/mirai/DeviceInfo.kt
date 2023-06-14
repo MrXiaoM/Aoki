@@ -66,6 +66,42 @@ object AokiDeviceInfo {
         file.mkdirsParent()
         file.writeText(DeviceInfoManager.serialize(this, DeviceInfoManager.format))
     }
+    fun DeviceInfo.saveV2ToAoki(filepath: String) {
+        val file = File(MainApplication.externalRoot, "bots/$filepath")
+        file.mkdirsParent()
+        file.writeText(DeviceInfoManager.format.encodeToString(
+            DeviceInfoManager.Wrapper.serializer(DeviceInfoManager.V2.serializer()),
+            DeviceInfoManager.Wrapper(2, toV2Info())
+        ))
+    }
+    private fun DeviceInfo.toV2Info(): DeviceInfoManager.V2 = DeviceInfoManager.V2(
+        display.decodeToString(),
+        product.decodeToString(),
+        device.decodeToString(),
+        board.decodeToString(),
+        brand.decodeToString(),
+        model.decodeToString(),
+        bootloader.decodeToString(),
+        fingerprint.decodeToString(),
+        bootId.decodeToString(),
+        procVersion.decodeToString(),
+        DeviceInfoManager.HexString(baseBand),
+        DeviceInfoManager.Version(
+            version.incremental.decodeToString(),
+            version.release.decodeToString(),
+            version.codename.decodeToString(),
+            version.sdk
+        ),
+        simInfo.decodeToString(),
+        osType.decodeToString(),
+        macAddress.decodeToString(),
+        wifiBSSID.decodeToString(),
+        wifiSSID.decodeToString(),
+        DeviceInfoManager.HexString(imsiMd5),
+        imei,
+        apn.decodeToString(),
+    )
+
     fun BotConfiguration.fileBasedDeviceInfoAndroid(filepath: String = "device.json") {
         deviceInfo = {
             workingDir.resolve(filepath).loadAsDeviceInfo { DeviceInfo.generateForAndroid() }

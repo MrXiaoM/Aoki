@@ -15,12 +15,11 @@ import top.mrxiaom.mirai.aoki.databinding.ActivityEditDeviceInfoBinding
 import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfo.generateForAndroid
 import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfo.loadFromAoki
 import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfo.saveToAoki
+import top.mrxiaom.mirai.aoki.mirai.AokiDeviceInfo.saveV2ToAoki
 import top.mrxiaom.mirai.aoki.util.AokiActivity
-import top.mrxiaom.mirai.aoki.util.startActivity
 import top.mrxiaom.mirai.aoki.util.text
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
@@ -49,6 +48,10 @@ class EditDeviceInfoActivity : AokiActivity<ActivityEditDeviceInfoBinding>(Activ
                 }
                 R.id.toolbar_save -> {
                     deviceInfo.saveToAoki("$qq/device.json")
+                    Toast.makeText(this, text(R.string.edit_device_saved).replace("\$qq", qq.toString()), Toast.LENGTH_SHORT).show()
+                }
+                R.id.toolbar_save_v2 -> {
+                    deviceInfo.saveV2ToAoki("$qq/device.json")
                     Toast.makeText(this, text(R.string.edit_device_saved).replace("\$qq", qq.toString()), Toast.LENGTH_SHORT).show()
                 }
             }

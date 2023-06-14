@@ -86,9 +86,13 @@
     <string name="hb_strategy_REGISTER">在线状态策略(REG)</string>
     <string name="hb_strategy_NONE">无策略(NONE)</string>
     <string name="edit_device_load">从本地文件重新加载</string>
-    <string name="edit_device_save">保存设备信息</string>
+    <string name="edit_device_save">保存设备信息(V3)</string>
+    <string name="edit_device_save_v2">保存设备信息(V2)</string>
     <string name="edit_device_help">
-        【使用方法】设备信息不懂的最好不要乱改，不认识的让它保持默认值，使用自己手机的信息或随机生成的信息就足够了。改为 $GEN 可重新生成数值。编辑完毕后，需要手动在右上角保存设备信息。
+        <Data><![CDATA[
+【使用方法】设备信息不懂的最好不要乱改，不认识的让它保持默认值，使用自己手机的信息或随机生成的信息就足够了。改为 $GEN 可重新生成数值。编辑完毕后，需要手动在右上角保存设备信息。
+【保存设备信息】V3格式适合最新开发版以及 2.15.0-RC，旧版本请自行保存为V2格式。
+]]> </Data>
     </string>
     <string name="edit_device_item_display">显示参数 Display</string>
     <string name="edit_device_item_product">产品名 Product</string>
