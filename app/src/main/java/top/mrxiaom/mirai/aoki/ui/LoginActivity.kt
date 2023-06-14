@@ -195,7 +195,8 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
             setView(ScrollView(context).apply {
                 setPadding(24)
                 addView(WebView(context).apply {
-                    loadData("<html><head><link rel=\"stylesheet\" href=\"https://cdn.bootcdn.net/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css\"></head><body>" + MDTool.markdown2Html(body) + "</body></html>", "text/html", "utf-8")
+                    setupRawResource()
+                    loadData(mdToHtml(body), "text/html", "utf-8")
                 })
             })
             buttonNeutral(R.string.update_fetch_download) {

@@ -4,17 +4,6 @@
     <string name="cancel">取消</string>
     <string name="about">关于…</string>
     <string name="about_title">关于 Aoki</string>
-    <string name="about_body">
-        <Data><![CDATA[
-<p>©<a href="https://mrxiaom.top/" target="_blank">人间工作</a> 2022 保留所有权利</p>
-
-<p>该应用程序基于 mirai 开发，使用 AGPL-3.0 许可证开源</p>
-<ul>
-<li><a href="https://github.com/mamoe/mirai" target="_blank">https://github.com/mamoe/mirai</a></li>
-<li><a href="https://github.com/MrXiaoM/Aoki" target="_blank">https://github.com/MrXiaoM/Aoki</a></li>
-</ul>
-]]> </Data>
-    </string>
     <string name="update_check_failed">检查更新失败，请检查你的网络连接</string>
     <string name="update_fetch_title">发现新版本 %s</string>
     <string name="update_fetch_download">下载</string>

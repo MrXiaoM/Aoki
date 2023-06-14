@@ -1,22 +1,28 @@
 package top.mrxiaom.mirai.aoki.ui
 
 import android.os.Bundle
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.view.MenuItem
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.net.toFile
 import top.mrxiaom.mirai.aoki.R
 import top.mrxiaom.mirai.aoki.databinding.ActivityAboutBinding
 import top.mrxiaom.mirai.aoki.util.AokiActivity
-import top.mrxiaom.mirai.aoki.util.text
+import top.mrxiaom.mirai.aoki.util.mdToHtml
+import top.mrxiaom.mirai.aoki.util.readRawText
+import top.mrxiaom.mirai.aoki.util.setupRawResource
+import java.io.ByteArrayInputStream
 
 class AboutActivity : AokiActivity<ActivityAboutBinding>(ActivityAboutBinding::class) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
 
-        binding.textView.apply {
-            text = Html.fromHtml(text(R.string.about_body), 0)
-            movementMethod = LinkMovementMethod.getInstance()
+        binding.aboutWebView.apply {
+            setupRawResource()
+            loadData(mdToHtml(readRawText(R.raw.about)), "text/html", "utf-8")
         }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

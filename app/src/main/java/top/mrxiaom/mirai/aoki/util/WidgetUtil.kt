@@ -10,11 +10,12 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
-import androidx.annotation.ArrayRes
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,7 +23,9 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.viewbinding.ViewBinding
+import com.youbenzi.mdtool.tool.MDTool
 import top.mrxiaom.mirai.aoki.R
+import java.io.ByteArrayInputStream
 import kotlin.reflect.KClass
 
 abstract class AokiActivity<T : ViewBinding>(private val bindingClass: KClass<T>)  : AppCompatActivity() {
@@ -164,3 +167,37 @@ fun Context.copy(label: String, text: String) {
 fun <T> LifecycleOwner.observe(data: LiveData<T>, block: T.() -> Unit) {
     data.observe(this) { it?.block() }
 }
+fun WebView.setupRawResource() {
+    webViewClient = object: WebViewClient() {
+        override fun shouldInterceptRequest(
+            view: WebView,
+            request: WebResourceRequest
+        ): WebResourceResponse? {
+            val url = request.url
+            if (url.toString().startsWith("http://raw/")) {
+                try {
+                    val file = url.path?.substring(1) ?: ""
+                    val name = file.substringBefore(".")
+                    val mimeType = when (file.substringAfter(".")) {
+                        "css" -> "text/css"
+                        "png" -> "image/png"
+                        "jpg" -> "image/jpeg"
+                        "jpeg" -> "image/jpeg"
+                        "html" -> "text/html"
+                        else -> "text/plain"
+                    }
+                    println("$mimeType raw/$name")
+                    val rawId = R.raw::class.java.getDeclaredField(name).get(null) as Int
+                    val input = resources.openRawResource(rawId)
+                    val content = input.use { it.readBytes() }
+                    return WebResourceResponse(mimeType, "UTF-8", ByteArrayInputStream(content))
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }
+            return super.shouldInterceptRequest(view, request)
+        }
+    }
+}
+fun Context.readRawText(@RawRes id: Int): String = resources.openRawResource(id).readBytes().toString(Charsets.UTF_8)
+fun mdToHtml(markdown: String): String = "<html><head><link rel=\"stylesheet\" href=\"http://raw/markdown.css\"/></head><body><div class=\"markdown-body\">${MDTool.markdown2Html(markdown)}</div></body></html>".also { println(it) }
