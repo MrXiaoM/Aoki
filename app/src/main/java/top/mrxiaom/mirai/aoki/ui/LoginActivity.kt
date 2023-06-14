@@ -401,12 +401,15 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
                 setTitle(account)
                 setItems(R.array.accounts_operation) { dialog, btn ->
                     when (btn) {
-                        0 -> shareAccount(account)
-                        1 -> folder.delFolder("device.json")
-                        2 -> folder.delFolder("cache")
+                        0 -> startActivity<EditDeviceInfoActivity> {
+                            putExtra("qq", account.toLong())
+                        }
+                        1 -> shareAccount(account)
+                        2 -> folder.delFolder("device.json")
+                        3 -> folder.delFolder("cache")
                         //TODO 并未发现以session开头的文件，故此行代码不做改动
-                        3 -> deleteSession(File(folder, "cache"))
-                        4 -> delFolder(folder)
+                        4 -> deleteSession(File(folder, "cache"))
+                        5 -> delFolder(folder)
                     }
                     Toast.makeText(context, R.string.accounts_operation_done, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()

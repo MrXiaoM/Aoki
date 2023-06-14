@@ -22,6 +22,7 @@
     <string name="action_check_qrlogin">扫码登录</string>
     <string name="accounts_title">账号管理</string>
     <string name="accounts_message">你要对这个账号做什么</string>
+    <string name="accounts_operation_edit_device">编辑设备信息</string>
     <string name="accounts_operation_export">打包并发送到…</string>
     <string name="accounts_operation_del_device">删除设备信息 DEVICE.JSON</string>
     <string name="accounts_operation_del_cache">删除登录缓存</string>
