@@ -33,6 +33,7 @@ abstract class AokiActivity<T : ViewBinding>(private val bindingClass: KClass<T>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mHandler = Handler(mainLooper)
+        @Suppress("unchecked_cast")
         binding = bindingClass.java.getDeclaredMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as T
         setContentView(binding.root)
     }
@@ -110,7 +111,6 @@ inline fun <reified T> Activity.startActivity(
     })
 }
 
-@Suppress("DEPRECATION")
 inline fun <reified T> Activity.startActivityForResult(
     requestId: Int,
     conf: Intent.() -> Unit = {}
@@ -152,7 +152,7 @@ fun AokiActivity<*>.dialogInUIThread(block: AlertDialog.Builder.() -> Unit) {
     runInUIThread { dialog(block) }
 }
 val Context.packageInfo: PackageInfo
-    @Suppress("deprecation")
+    @Suppress("DEPRECATION")
     get() =  packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS)
 fun Context.copy(text: String) = copy(text, text)
 fun Context.copy(label: String, text: String) {
