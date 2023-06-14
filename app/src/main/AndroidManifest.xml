@@ -52,6 +52,14 @@
                     android:value=""/>
         </activity>
         <activity
+                android:name=".ui.EditDeviceInfoActivity"
+                android:exported="false"
+                android:launchMode="singleInstance">
+            <meta-data
+                    android:name="android.app.lib_name"
+                    android:value=""/>
+        </activity>
+        <activity
                 android:name=".ui.AboutActivity"
                 android:exported="false">
             <meta-data

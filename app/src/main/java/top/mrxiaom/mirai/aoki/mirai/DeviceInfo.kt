@@ -50,7 +50,7 @@ object AokiDeviceInfo {
                 imsiMd5,
                 imei,
                 apn,
-                Settings.System.getString(MainApplication.contentResolver, "android_id").toByteArray()
+                androidId
             )
         }
     }

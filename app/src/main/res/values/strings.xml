@@ -85,6 +85,39 @@
     <string name="hb_strategy_STAB_HB">稳定策略(STAB)</string>
     <string name="hb_strategy_REGISTER">在线状态策略(REG)</string>
     <string name="hb_strategy_NONE">无策略(NONE)</string>
+    <string name="edit_device_load">从本地文件重新加载</string>
+    <string name="edit_device_save">保存设备信息</string>
+    <string name="edit_device_help">
+        【使用方法】设备信息不懂的最好不要乱改，不认识的让它保持默认值，使用自己手机的信息或随机生成的信息就足够了。改为 $GEN 可重新生成数值。编辑完毕后，需要手动在右上角保存设备信息。
+    </string>
+    <string name="edit_device_item_display">显示参数 Display</string>
+    <string name="edit_device_item_product">产品名 Product</string>
+    <string name="edit_device_item_device">设施名 Device</string>
+    <string name="edit_device_item_board">主板 board</string>
+    <string name="edit_device_item_brand">品牌 brand</string>
+    <string name="edit_device_item_model">型号 Model</string>
+    <string name="edit_device_item_bootloader">BootLoader</string>
+    <string name="edit_device_item_fingerprint">设备指纹 Fingerprint</string>
+    <string name="edit_device_item_bootid">BootId</string>
+    <string name="edit_device_item_procversion">内核版本 ProcVersion</string>
+    <string name="edit_device_item_baseband">基带版本 BaseBand</string>
+    <string name="edit_device_item_version_incremental">系统版本:源码控制版本号 Version.incremental</string>
+    <string name="edit_device_item_version_release">系统版本:版本字符串 Version.release</string>
+    <string name="edit_device_item_version_codename">系统版本:当前开发代码 Version.codename</string>
+    <string name="edit_device_item_version_sdk">系统版本:版本号 Version.sdk</string>
+    <string name="edit_device_item_siminfo">SIM卡类型 SIMInfo</string>
+    <string name="edit_device_item_ostype">系统类型 OSType</string>
+    <string name="edit_device_item_macaddress">MAC地址 MACAddress</string>
+    <string name="edit_device_item_wifibssid">路由器MAC地址 WiFiBSSID</string>
+    <string name="edit_device_item_wifissid">WiFi名称 WiFiSSID</string>
+    <string name="edit_device_item_imsimd5">唯一标识符 imsiMd5</string>
+    <string name="edit_device_item_imei">手机串号 IMEI</string>
+    <string name="edit_device_item_apn">网络类型 APN</string>
+    <string name="edit_device_item_androidid">AndroidID</string>
+    <string name="edit_device_saved">你已保存设备信息文件 $qq/device.json</string>
+    <string name="edit_device_reloaded">已重新读取设备信息文件 $qq/device.json</string>
+    <string name="edit_device_reset">已重置数值</string>
+    <string name="edit_device_invaild">你输入的数值无效</string>
     <string-array name="update_channel_display">
         <item>稳定版</item>
         <item>测试版</item>

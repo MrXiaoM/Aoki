@@ -14,7 +14,7 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/back"
             android:id="@+id/toolbar"
-            app:title="编辑设备信息"/>
+            app:title="编辑设备信息" app:menu="@menu/edit_device_menu"/>
     <ScrollView
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -31,12 +31,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="24dp"
-                    android:text="【使用方法】设备信息不懂的最好不要乱改，不认识的让它保持默认值，使用自己手机的信息或随机生成的信息就足够了。长按输入框可选择重置数值。"/>
+                    android:text="@string/edit_device_help"/>
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="显示参数 Display"/>
+                    android:text="@string/edit_device_item_display"/>
             <EditText
                     android:id="@+id/edit_display"
                     android:layout_width="match_parent"
@@ -45,7 +45,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="产品名 Product"/>
+                    android:text="@string/edit_device_item_product"/>
             <EditText
                     android:id="@+id/edit_product"
                     android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="设施名 Device"/>
+                    android:text="@string/edit_device_item_device"/>
             <EditText
                     android:id="@+id/edit_device"
                     android:layout_width="match_parent"
@@ -63,7 +63,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="主板 board"/>
+                    android:text="@string/edit_device_item_board"/>
             <EditText
                     android:id="@+id/edit_board"
                     android:layout_width="match_parent"
@@ -72,7 +72,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="品牌 brand"/>
+                    android:text="@string/edit_device_item_brand"/>
             <EditText
                     android:id="@+id/edit_brand"
                     android:layout_width="match_parent"
@@ -81,7 +81,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="型号 Model"/>
+                    android:text="@string/edit_device_item_model"/>
             <EditText
                     android:id="@+id/edit_model"
                     android:layout_width="match_parent"
@@ -90,7 +90,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="BootLoader"/>
+                    android:text="@string/edit_device_item_bootloader"/>
             <EditText
                     android:id="@+id/edit_bootloader"
                     android:layout_width="match_parent"
@@ -99,16 +99,16 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="设备指纹 Figerprint"/>
+                    android:text="@string/edit_device_item_fingerprint"/>
             <EditText
-                    android:id="@+id/edit_figerprint"
+                    android:id="@+id/edit_fingerprint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="BootId"/>
+                    android:text="@string/edit_device_item_bootid"/>
             <EditText
                     android:id="@+id/edit_bootId"
                     android:layout_width="match_parent"
@@ -117,7 +117,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="内核版本 ProcVersion"/>
+                    android:text="@string/edit_device_item_procversion"/>
             <EditText
                     android:id="@+id/edit_procVersion"
                     android:layout_width="match_parent"
@@ -126,7 +126,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="基带版本 BaseBand"/>
+                    android:text="@string/edit_device_item_baseband"/>
             <EditText
                     android:id="@+id/edit_baseBand"
                     android:layout_width="match_parent"
@@ -135,7 +135,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="系统版本:源码控制版本号 Version.incremental"/>
+                    android:text="@string/edit_device_item_version_incremental"/>
             <EditText
                     android:id="@+id/edit_version_incremental"
                     android:layout_width="match_parent"
@@ -144,7 +144,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="系统版本:版本字符串 Version.release"/>
+                    android:text="@string/edit_device_item_version_release"/>
             <EditText
                     android:id="@+id/edit_version_release"
                     android:layout_width="match_parent"
@@ -153,7 +153,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="系统版本:当前开发代码 Version.codename"/>
+                    android:text="@string/edit_device_item_version_codename"/>
             <EditText
                     android:id="@+id/edit_version_codename"
                     android:layout_width="match_parent"
@@ -162,7 +162,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="系统版本:版本号 Version.sdk"/>
+                    android:text="@string/edit_device_item_version_sdk"/>
             <EditText
                     android:id="@+id/edit_version_sdk"
                     android:layout_width="match_parent"
@@ -171,7 +171,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SIM卡类型 SIMInfo"/>
+                    android:text="@string/edit_device_item_siminfo"/>
             <EditText
                     android:id="@+id/edit_simInfo"
                     android:layout_width="match_parent"
@@ -180,7 +180,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="系统类型 OSType"/>
+                    android:text="@string/edit_device_item_ostype"/>
             <EditText
                     android:id="@+id/edit_osType"
                     android:layout_width="match_parent"
@@ -189,7 +189,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="MAC地址 MACAddress"/>
+                    android:text="@string/edit_device_item_macaddress"/>
             <EditText
                     android:id="@+id/edit_macAddress"
                     android:layout_width="match_parent"
@@ -198,7 +198,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="路由器MAC地址 WiFiBSSID"/>
+                    android:text="@string/edit_device_item_wifibssid"/>
             <EditText
                     android:id="@+id/edit_wifiBSSID"
                     android:layout_width="match_parent"
@@ -207,7 +207,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="WiFi名称 WiFiSSID"/>
+                    android:text="@string/edit_device_item_wifissid"/>
             <EditText
                     android:id="@+id/edit_wifiSSID"
                     android:layout_width="match_parent"
@@ -216,7 +216,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="唯一标识符 imsiMd5"/>
+                    android:text="@string/edit_device_item_imsimd5"/>
             <EditText
                     android:id="@+id/edit_imsiMd5"
                     android:layout_width="match_parent"
@@ -225,7 +225,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="手机串号 IMEI"/>
+                    android:text="@string/edit_device_item_imei"/>
             <EditText
                     android:id="@+id/edit_imei"
                     android:layout_width="match_parent"
@@ -234,7 +234,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="网络类型 APN"/>
+                    android:text="@string/edit_device_item_apn"/>
             <EditText
                     android:id="@+id/edit_apn"
                     android:layout_width="match_parent"
@@ -243,7 +243,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="AndroidID"/>
+                    android:text="@string/edit_device_item_androidid"/>
             <EditText
                     android:id="@+id/edit_androidId"
                     android:layout_width="match_parent"
