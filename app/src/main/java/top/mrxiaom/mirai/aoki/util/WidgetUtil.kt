@@ -167,7 +167,7 @@ fun Context.copy(label: String, text: String) {
 fun <T> LifecycleOwner.observe(data: LiveData<T>, block: T.() -> Unit) {
     data.observe(this) { it?.block() }
 }
-fun WebView.setupRawResource() {
+fun WebView.setupRawResource(openLinkInOtherApp: Boolean = true) {
     webViewClient = object: WebViewClient() {
         override fun shouldInterceptRequest(
             view: WebView,
@@ -196,6 +196,14 @@ fun WebView.setupRawResource() {
                 }
             }
             return super.shouldInterceptRequest(view, request)
+        }
+
+        override fun shouldOverrideUrlLoading(
+            view: WebView,
+            request: WebResourceRequest): Boolean {
+            if (!openLinkInOtherApp) return super.shouldOverrideUrlLoading(view, request)
+            context.startActivity(Intent(Intent.ACTION_VIEW, request.url));
+            return true
         }
     }
 }
