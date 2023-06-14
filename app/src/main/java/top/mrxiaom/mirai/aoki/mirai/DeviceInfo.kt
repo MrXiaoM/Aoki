@@ -6,6 +6,7 @@ import android.provider.Settings
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.utils.*
 import top.mrxiaom.mirai.aoki.MainApplication
+import top.mrxiaom.mirai.aoki.util.mkdirsParent
 import java.io.File
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -59,6 +60,11 @@ object AokiDeviceInfo {
      */
     fun DeviceInfo.Companion.loadFromAoki(filepath: String): DeviceInfo {
         return File(MainApplication.getExternalFilesDir(null), "AokiMirai/bots/$filepath").loadAsDeviceInfo { generateForAndroid() }
+    }
+    fun DeviceInfo.saveToAoki(filepath: String) {
+        val file = File(MainApplication.getExternalFilesDir(null), "AokiMirai/bots/$filepath")
+        file.mkdirsParent()
+        file.writeText(DeviceInfoManager.serialize(this, DeviceInfoManager.format))
     }
     fun BotConfiguration.fileBasedDeviceInfoAndroid(filepath: String = "device.json") {
         deviceInfo = {

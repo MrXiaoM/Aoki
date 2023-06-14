@@ -189,7 +189,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="MAC地址 Model"/>
+                    android:text="MAC地址 MACAddress"/>
             <EditText
                     android:id="@+id/edit_macAddress"
                     android:layout_width="match_parent"
