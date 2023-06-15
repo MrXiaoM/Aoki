@@ -114,28 +114,28 @@ public object FixProtocolVersion {
                 null == impl -> null
                 impl.runCatching { id }.isFailure -> impl.change {
                     apkId = "com.tencent.mobileqq"
-                    id = 537161402
-                    ver = "8.9.58.11170"
-                    sdkVer = "6.0.0.2545"
-                    miscBitMap = 0x08F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x0214_10E0
+                    id = 537118044
+                    ver = "8.8.88.7083"
+                    sdkVer = "6.0.0.2497"
+                    miscBitMap = 150470524
+                    subSigMap = 66560
+                    mainSigMap = 16724722
                     sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
-                    buildTime = 1684467300L
-                    ssoVersion = 20
+                    buildTime = 1648004515L
+                    ssoVersion = 18
                 }
                 impl.id < 537161402 -> impl.apply {
                     apkId = "com.tencent.mobileqq"
-                    id = 537161402
-                    ver = "8.9.58"
-                    buildVer = "8.9.58.11170"
-                    sdkVer = "6.0.0.2545"
-                    miscBitMap = 0x08F7_FF7C
-                    subSigMap = 0x0001_0400
-                    mainSigMap = 0x0214_10E0
+                    id = 537118044
+                    ver = "8.8.88"
+                    buildVer = "8.8.88.7083"
+                    sdkVer = "6.0.0.2497"
+                    miscBitMap = 150470524
+                    subSigMap = 66560
+                    mainSigMap = 16724722
                     sign = "A6 B7 45 BF 24 A2 C2 77 52 77 16 F6 F3 6E B6 8D"
-                    buildTime = 1684467300L
-                    ssoVersion = 20
+                    buildTime = 1648004515L
+                    ssoVersion = 18
                     appKey = "0S200MNJT807V3GE"
                     supportsQRLogin = false
                 }
@@ -284,7 +284,10 @@ public object FixProtocolVersion {
                 }
             }
         )
+        sync(protocol, json)
+    }
 
+    fun sync(protocol: BotConfiguration.MiraiProtocol, json: JsonObject) {
         MiraiProtocolInternal.protocols.compute(protocol) { _, impl ->
             when {
                 null == impl -> null
