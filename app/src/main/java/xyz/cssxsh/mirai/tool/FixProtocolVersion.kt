@@ -264,7 +264,11 @@ public object FixProtocolVersion {
         }.fold(
             onSuccess = { text ->
                 val online = Json.parseToJsonElement(text).jsonObject
-                if (file.isFile) {
+                if (!file.exists()) {
+                    file.writeText(text)
+                    online
+                }
+                else if (file.isFile) {
                     val local = Json.parseToJsonElement(file.readText()).jsonObject
                     if (local.getValue("dump_time").jsonPrimitive.long <
                         online.getValue("dump_time").jsonPrimitive.long) {
