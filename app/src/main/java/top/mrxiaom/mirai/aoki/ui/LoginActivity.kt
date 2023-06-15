@@ -91,6 +91,11 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.toolbar_about -> startActivity<AboutActivity>()
+                R.id.toolbar_check_protocol -> dialog {
+                    setTitle(R.string.protocol_check)
+                    setMessage(FixProtocolVersion.info().map { info -> info.value }.joinToString("\n\n"))
+                    buttonPositive(R.string.ok)
+                }.show()
                 R.id.toolbar_load_protocol -> dialog {
                     setTitle(R.string.protocol_load_title)
                     setMessage(R.string.protocol_load_info)
