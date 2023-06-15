@@ -12,7 +12,7 @@
 * 加入 Github 的 Markdown 主题样式
 
 ## 修复或变更
-* 将 mirai 版本升级到 2.15.0-dev-98
+* 将 mirai 版本升级到 2.15.0-dev-99
 * 升级 fix-protocol-version 到 1.7.1
 * 关于页面改为使用 WebView 显示
 
