@@ -3,6 +3,7 @@ package xyz.cssxsh.mirai.tool
 import kotlinx.serialization.json.*
 import net.mamoe.mirai.internal.utils.*
 import net.mamoe.mirai.utils.*
+import top.mrxiaom.mirai.aoki.MainApplication
 import java.io.*
 import java.net.*
 import java.time.*
@@ -232,15 +233,15 @@ public object FixProtocolVersion {
     }
 
     @JvmStatic
-    public fun sync(protocol: BotConfiguration.MiraiProtocol) {
+    public fun sync(protocol: BotConfiguration.MiraiProtocol, ghProxy: String = "") {
         val (file, url) = when (protocol) {
             BotConfiguration.MiraiProtocol.ANDROID_PHONE -> {
-                File("android_phone.json") to
-                        URL("https://raw.githubusercontent.com/RomiChan/protocol-versions/master/android_phone.json")
+                File(MainApplication.externalRoot, "android_phone.json") to
+                        URL(ghProxy + "https://raw.githubusercontent.com/RomiChan/protocol-versions/master/android_phone.json")
             }
             BotConfiguration.MiraiProtocol.ANDROID_PAD -> {
-                File("android_pad.json") to
-                        URL("https://raw.githubusercontent.com/RomiChan/protocol-versions/master/android_pad.json")
+                File(MainApplication.externalRoot,"android_pad.json") to
+                        URL(ghProxy + "https://raw.githubusercontent.com/RomiChan/protocol-versions/master/android_pad.json")
             }
             else -> {
                 throw IllegalArgumentException("不支持同步的协议: ${protocol.name}")
