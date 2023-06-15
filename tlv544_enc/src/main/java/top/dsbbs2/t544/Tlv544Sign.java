@@ -531,7 +531,7 @@ public interface Tlv544Sign {
         put_16b.apply(Arrays.asList(stat).subList(14,16),data);
         Long[] org_state=state.org_state;
         for(int i=0;i<12;i++) org_state[i]=stat[i];
-        for(int i=0;i<16;i++) org_state[i]= ThreadLocalRandom.current().nextLong((long)Math.pow(2,32));
+        for(int i=12;i<16;i++) org_state[i]= ThreadLocalRandom.current().nextLong((long)Math.pow(2,32));
     }
     public static long littleEndianBytesToUnsignedInt(byte[] bytes) {
         if (bytes.length > 4) {
