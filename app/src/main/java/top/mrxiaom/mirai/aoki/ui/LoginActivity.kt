@@ -59,7 +59,6 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
     private lateinit var checkUpdateResult: CheckUpdateResult
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        externalRoot = File(getExternalFilesDir(null), "AokiMirai").also { it.mkdirsQuietly() }
         val handler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { p0, e ->
             e.printStackTrace()

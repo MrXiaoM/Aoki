@@ -4,6 +4,7 @@ import android.app.Application
 import net.mamoe.mirai.utils.Services
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import top.mrxiaom.mirai.aoki.mirai.EncryptProvider
+import top.mrxiaom.mirai.aoki.util.mkdirsQuietly
 import xyz.cssxsh.mirai.tool.FixProtocolVersion
 import java.io.File
 import java.security.Security
@@ -22,6 +23,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        externalRoot = File(getExternalFilesDir(null), "AokiMirai").also { it.mkdirsQuietly() }
         setUpECDHEnvironment()
         FixProtocolVersion.update()
         Services.registerAsOverride("net.mamoe.mirai.internal.spi.EncryptService", EncryptProvider::class.jvmName) { EncryptProvider }
