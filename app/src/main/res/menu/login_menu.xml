@@ -5,6 +5,12 @@
             android:id="@+id/toolbar_settings"
             android:title="@string/settings" app:showAsAction="withText"/>
     <item
+            android:id="@+id/toolbar_load_protocol"
+            android:title="@string/protocol_load" app:showAsAction="withText"/>
+    <item
+            android:id="@+id/toolbar_download_protocol"
+            android:title="@string/protocol_download" app:showAsAction="withText"/>
+    <item
             android:id="@+id/toolbar_about"
             android:title="@string/about" app:showAsAction="withText"/>
 </menu>

@@ -91,6 +91,25 @@ class LoginActivity : AokiActivity<ActivityLoginBinding>(ActivityLoginBinding::c
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.toolbar_about -> startActivity<AboutActivity>()
+                R.id.toolbar_load_protocol -> dialog {
+                    setTitle(R.string.protocol_load_title)
+                    setMessage(R.string.protocol_load_info)
+                    buttonPositive(R.string.ok) {
+                        val count = MainApplication.syncProtocolVersions()
+                        Toast.makeText(context, text(R.string.protocol_load_done).replace("\$count", count.toString()), Toast.LENGTH_SHORT).show()
+                    }
+                    buttonNegative(R.string.cancel)
+                }.show()
+                R.id.toolbar_download_protocol -> {
+                    val config = PreferenceManager.getDefaultSharedPreferences(this@LoginActivity)
+                    val proxy = config.getString("update_proxy", "https://ghproxy.com/") ?: ""
+                    Toast.makeText(this@LoginActivity, R.string.protocol_download_start, Toast.LENGTH_SHORT).show()
+                    loginViewModel.viewModelScope.launch(Dispatchers.IO) {
+                        FixProtocolVersion.sync(MiraiProtocol.ANDROID_PHONE, proxy)
+                        FixProtocolVersion.sync(MiraiProtocol.ANDROID_PAD, proxy)
+                        runInUIThread { Toast.makeText(this@LoginActivity, R.string.protocol_download_done, Toast.LENGTH_SHORT).show() }
+                    }
+                }
                 R.id.toolbar_settings -> startActivity<SettingsActivity>()
             }
             return@setOnMenuItemClickListener false

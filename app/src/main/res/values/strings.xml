@@ -112,6 +112,13 @@
     <string name="edit_device_reloaded">已重新读取设备信息文件 $qq/device.json</string>
     <string name="edit_device_reset">已重置数值</string>
     <string name="edit_device_invaild">你输入的数值无效</string>
+    <string name="protocol_load">重新加载本地协议变更</string>
+    <string name="protocol_load_title">加载本地协议变更</string>
+    <string name="protocol_load_info">从文件夹 Android/data/top.mrxiaom.mirai.aoki/AokiMirai/ 中寻找以协议名称命名的 json 文件重新加载协议变更。如 android_pad.json</string>
+    <string name="protocol_load_done">已加载 $count 个协议变更</string>
+    <string name="protocol_download">从网络仓库下载协议变更</string>
+    <string name="protocol_download_start">开始下载…</string>
+    <string name="protocol_download_done">协议变更已下载完成并应用</string>
     <string-array name="update_channel_display">
         <item>稳定版</item>
         <item>测试版</item>
